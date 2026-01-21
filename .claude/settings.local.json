@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npm run build)",
+      "Bash(ls:*)",
+      "WebSearch",
+      "WebFetch(domain:www.heroui.com)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run clean:*)"
+    ]
+  }
+}

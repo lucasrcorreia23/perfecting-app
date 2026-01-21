@@ -1,26 +1,184 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===================================
+   PERFECTING SAAS - DESIGN SYSTEM
+   Grid: 8px base
+   Colors: 60-30-10 rule
+   Typography: Inter
+=================================== */
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* 60% - Neutral Light (Dominant) */
+  --background-primary: #FAFAFA;
+  --background-secondary: #F5F5F5;
+  --surface: #FFFFFF;
+  --text-secondary: #6B7280;
+
+  /* 30% - Neutral Dark (Secondary) */
+  --text-primary: #1F2937;
+  --text-heading: #111827;
+  --border: #E5E7EB;
+  --surface-elevated: #F9FAFB;
+
+  /* 10% - Accent Blue (Emphasis) */
+  --primary: #2E63CD;
+  --primary-hover: #2451A8;
+  --primary-active: #1D4185;
+  --primary-light: #EBF0FA;
+
+  /* Category Colors */
+  --category-purple: #8B5CF6;
+  --category-blue: #2E63CD;
+  --category-green: #10B981;
+  --category-orange: #F59E0B;
+  --category-red: #EF4444;
+
+  /* Feedback Colors */
+  --success: #10B981;
+  --warning: #F59E0B;
+  --error: #EF4444;
+  --info: #3B82F6;
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Base Styles */
+html {
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--background-primary);
+  color: var(--text-primary);
+  font-family: var(--font-inter), system-ui, sans-serif;
+  line-height: 1.5;
 }
+
+/* Typography Scale */
+.heading-1 {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 56px;
+  color: var(--text-heading);
+}
+
+.heading-2 {
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 40px;
+  color: var(--text-heading);
+}
+
+.heading-3 {
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 32px;
+  color: var(--text-heading);
+}
+
+.body-large {
+  font-size: 18px;
+  line-height: 28px;
+  color: var(--text-primary);
+}
+
+.body {
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--text-primary);
+}
+
+.body-small {
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--text-secondary);
+}
+
+.caption {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  color: var(--text-secondary);
+}
+
+/* Focus states */
+*:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 300ms ease forwards;
+}
+
+.animate-slide-in {
+  animation: slideIn 300ms ease forwards;
+}
+
+/* Waveform animation */
+@keyframes wave {
+  0%, 100% { transform: scaleY(0.5); }
+  50% { transform: scaleY(1); }
+}
+
+.waveform-bar {
+  animation: wave 1.2s ease-in-out infinite;
+}
+
+.waveform-bar:nth-child(1) { animation-delay: 0s; }
+.waveform-bar:nth-child(2) { animation-delay: 0.1s; }
+.waveform-bar:nth-child(3) { animation-delay: 0.2s; }
+.waveform-bar:nth-child(4) { animation-delay: 0.3s; }
+.waveform-bar:nth-child(5) { animation-delay: 0.4s; }
+.waveform-bar:nth-child(6) { animation-delay: 0.5s; }
+.waveform-bar:nth-child(7) { animation-delay: 0.6s; }
+.waveform-bar:nth-child(8) { animation-delay: 0.7s; }
+.waveform-bar:nth-child(9) { animation-delay: 0.8s; }
+.waveform-bar:nth-child(10) { animation-delay: 0.9s; }
+.waveform-bar:nth-child(11) { animation-delay: 1.0s; }
+.waveform-bar:nth-child(12) { animation-delay: 1.1s; }
