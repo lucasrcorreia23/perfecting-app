@@ -1,22 +1,6 @@
 "use client";
 
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  Progress,
-  Avatar,
-  Button,
-  Chip,
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-  Select,
-  SelectItem,
-} from "@heroui/react";
+import { Card, CardHeader, CardBody, Button, Chip, Progress, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Avatar, Select, SelectItem } from "@heroui/react";
 import { useState } from "react";
 import Link from "next/link";
 import {
@@ -63,12 +47,13 @@ export default function AdminDashboardPage() {
 
         <div className="flex items-center gap-3">
           <Select
-            selectedKeys={[timeRange]}
+            selectedKeys={new Set([timeRange])}
             onSelectionChange={(keys) => setTimeRange(Array.from(keys)[0] as string)}
-            variant="bordered"
+            className="w-44"
+            aria-label="Período"
             classNames={{
-              base: "w-44",
-              trigger: "border-[#E5E7EB] hover:border-[#2E63CD]",
+              trigger: "bg-white border border-[#E5E7EB] rounded-xl px-4 py-2.5 hover:border-[#C5D4ED] hover:bg-[#FAFAFA] transition-all duration-200 min-h-[44px]",
+              value: "text-[#1F2937] font-medium",
             }}
           >
             {timeRanges.map((range) => (
@@ -76,10 +61,10 @@ export default function AdminDashboardPage() {
             ))}
           </Select>
           <Button
-            color="primary"
+            
             className="bg-[#2E63CD] hover:bg-[#2451A8]"
-            startContent={<PlusIcon className="w-5 h-5" />}
           >
+            <PlusIcon className="w-5 h-5" />
             Novo Role-play
           </Button>
         </div>
@@ -196,11 +181,7 @@ export default function AdminDashboardPage() {
             <CardBody className="p-0">
               <Table
                 aria-label="Tabela de desempenho da equipe"
-                removeWrapper
-                classNames={{
-                  th: "bg-[#F9FAFB] text-[#6B7280] font-medium",
-                  td: "py-3",
-                }}
+                className="w-full"
               >
                 <TableHeader>
                   <TableColumn>MEMBRO</TableColumn>
@@ -215,7 +196,6 @@ export default function AdminDashboardPage() {
                       <TableCell>
                         <div className="flex items-center gap-3">
                           <Avatar
-                            src={user.userAvatar}
                             name={user.userName}
                             size="sm"
                           />
@@ -238,7 +218,6 @@ export default function AdminDashboardPage() {
                         <div className="flex items-center gap-2">
                           <Progress
                             value={user.score}
-                            maxValue={100}
                             color={user.score >= 80 ? "success" : user.score >= 60 ? "warning" : "danger"}
                             className="max-w-24 h-2"
                           />
@@ -292,7 +271,6 @@ export default function AdminDashboardPage() {
                   >
                     <div className="flex items-center gap-4">
                       <Avatar
-                        src={roleplay.agent.avatar}
                         name={roleplay.agent.name}
                         size="sm"
                       />
@@ -304,7 +282,7 @@ export default function AdminDashboardPage() {
                     <div className="flex items-center gap-4">
                       <div className="text-right">
                         <p className="text-sm font-medium text-[#1F2937]">
-                          {Math.floor(Math.random() * 100) + 50} sessões
+                          {Math.floor(Math.random() * 50) + 10} sessões
                         </p>
                         <p className="text-xs text-[#6B7280]">esta semana</p>
                       </div>
@@ -333,32 +311,26 @@ export default function AdminDashboardPage() {
               </h3>
             </CardHeader>
             <CardBody className="p-4 space-y-2">
-              <Link href="/users">
-                <Button
-                  variant="light"
-                  className="w-full justify-start text-[#1F2937]"
-                  startContent={<UsersIcon className="w-5 h-5 text-[#6B7280]" />}
-                >
-                  Gerenciar Usuários
-                </Button>
+              <Link
+                href="/users"
+                className="flex items-center gap-2 w-full px-4 py-2 rounded-lg hover:bg-[#F5F5F5] text-[#1F2937] transition-colors"
+              >
+                <UsersIcon className="w-5 h-5 text-[#6B7280]" />
+                Gerenciar Usuários
               </Link>
-              <Link href="/roleplays">
-                <Button
-                  variant="light"
-                  className="w-full justify-start text-[#1F2937]"
-                  startContent={<PlayCircleIcon className="w-5 h-5 text-[#6B7280]" />}
-                >
-                  Ver Role-plays
-                </Button>
+              <Link
+                href="/roleplays"
+                className="flex items-center gap-2 w-full px-4 py-2 rounded-lg hover:bg-[#F5F5F5] text-[#1F2937] transition-colors"
+              >
+                <PlayCircleIcon className="w-5 h-5 text-[#6B7280]" />
+                Ver Role-plays
               </Link>
-              <Link href="/metrics">
-                <Button
-                  variant="light"
-                  className="w-full justify-start text-[#1F2937]"
-                  startContent={<ChartBarIcon className="w-5 h-5 text-[#6B7280]" />}
-                >
-                  Ver Métricas
-                </Button>
+              <Link
+                href="/metrics"
+                className="flex items-center gap-2 w-full px-4 py-2 rounded-lg hover:bg-[#F5F5F5] text-[#1F2937] transition-colors"
+              >
+                <ChartBarIcon className="w-5 h-5 text-[#6B7280]" />
+                Ver Métricas
               </Link>
             </CardBody>
           </Card>
@@ -416,7 +388,6 @@ export default function AdminDashboardPage() {
                       {index === 0 ? "🥇" : index === 1 ? "🥈" : "🥉"}
                     </span>
                     <Avatar
-                      src={user.userAvatar}
                       name={user.userName}
                       size="sm"
                     />

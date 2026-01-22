@@ -1,19 +1,8 @@
 "use client";
 
-import {
-  Card,
-  CardBody,
-  CardFooter,
-  Button,
-  Avatar,
-  Chip,
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-} from "@heroui/react";
+import { Card, CardBody, CardFooter, Button, Chip, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Avatar } from "@heroui/react";
 import { EllipsisVerticalIcon, ClockIcon } from "@heroicons/react/24/outline";
-import { cn, getCategoryColor, getCategoryLabel, truncateText } from "@/lib/utils";
+import { getCategoryColor, getCategoryLabel, truncateText } from "@/lib/utils";
 import type { Roleplay } from "@/types";
 
 interface RoleplayCardProps {
@@ -35,10 +24,10 @@ export function RoleplayCard({
   const categoryLabel = getCategoryLabel(roleplay.category);
 
   return (
-    <Card className="bg-white border border-[#E5E7EB] rounded-2xl transition-all duration-200 card-hover">
+    <Card className="bg-white border border-[#E5E7EB] rounded-2xl transition-all duration-200 card-hover overflow-hidden">
       <CardBody className="p-6 gap-4">
         {/* Header with category tag and menu */}
-        <div className="flex items-start justify-between">
+        <div className="flex items-start justify-between gap-2">
           <Chip
             size="sm"
             variant="flat"
@@ -46,18 +35,18 @@ export function RoleplayCard({
               backgroundColor: `${categoryColor}15`,
               color: categoryColor,
             }}
-            className="font-medium text-xs uppercase tracking-wide"
+            className="font-medium text-xs uppercase tracking-wider px-2"
           >
             {categoryLabel}
           </Chip>
 
           {showActions && (
-            <Dropdown placement="bottom-end">
+            <Dropdown >
               <DropdownTrigger>
                 <Button
                   isIconOnly
                   size="sm"
-                  variant="light"
+                  variant="ghost"
                   className="text-[#6B7280] -mt-1 -mr-1"
                   aria-label="Opções do role-play"
                 >
@@ -111,7 +100,6 @@ export function RoleplayCard({
         {/* Agent info */}
         <div className="flex items-center gap-3 pt-2 border-t border-[#E5E7EB]">
           <Avatar
-            src={roleplay.agent.avatar}
             name={roleplay.agent.name}
             size="sm"
             className="ring-2 ring-offset-2"
@@ -132,7 +120,8 @@ export function RoleplayCard({
 
       <CardFooter className="px-6 pb-6 pt-0">
         <Button
-          className="w-full bg-[#2E63CD] hover:bg-[#2451A8] text-white font-medium"
+          disableRipple={false}
+          className="w-full font-medium bg-[#2E63CD] hover:bg-[#2451A8] text-white"
           onPress={onPractice}
         >
           Praticar

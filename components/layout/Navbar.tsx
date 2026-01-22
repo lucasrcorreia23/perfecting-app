@@ -1,21 +1,6 @@
 "use client";
 
-import {
-  Navbar as HeroNavbar,
-  NavbarBrand,
-  NavbarContent,
-  NavbarItem,
-  NavbarMenuToggle,
-  NavbarMenu,
-  NavbarMenuItem,
-  Button,
-  Avatar,
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-  Badge,
-} from "@heroui/react";
+import { Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Navbar as HeroNavbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, Badge, Avatar } from "@heroui/react";
 import { useState } from "react";
 import Link from "next/link";
 import {
@@ -49,14 +34,14 @@ export function Navbar({ user }: NavbarProps) {
       }}
     >
       {/* Mobile menu toggle */}
-      <NavbarContent className="sm:hidden" justify="start">
+      <NavbarContent className="sm:hidden">
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Fechar menu" : "Abrir menu"}
         />
       </NavbarContent>
 
       {/* Logo */}
-      <NavbarContent className="pr-3" justify="start">
+      <NavbarContent className="pr-3">
         <NavbarBrand>
           <Link href="/dashboard" className="flex items-center gap-2">
             <span className="font-semibold text-lg text-[#111827]">
@@ -67,7 +52,7 @@ export function Navbar({ user }: NavbarProps) {
       </NavbarContent>
 
       {/* Desktop navigation */}
-      <NavbarContent className="hidden sm:flex gap-8" justify="center">
+      <NavbarContent className="hidden sm:flex gap-8">
         {user?.role === "admin" && (
           <NavbarItem>
             <Link
@@ -81,18 +66,18 @@ export function Navbar({ user }: NavbarProps) {
       </NavbarContent>
 
       {/* Right side actions */}
-      <NavbarContent justify="end" className="gap-4">
+      <NavbarContent className="gap-4">
         {/* Notifications */}
         <NavbarItem>
-          <Dropdown placement="bottom-end">
+          <Dropdown >
             <DropdownTrigger>
               <Button 
                 isIconOnly 
-                variant="light" 
+                variant="ghost" 
                 className="text-[#6B7280]"
                 aria-label="Notificações"
               >
-                <Badge content="3" color="danger" size="sm" shape="circle">
+                <Badge content="3" color="danger">
                   <BellIcon className="w-5 h-5" />
                 </Badge>
               </Button>
@@ -100,19 +85,19 @@ export function Navbar({ user }: NavbarProps) {
             <DropdownMenu aria-label="Notificações" className="w-80">
               <DropdownItem
                 key="notification-1"
-                description="Você completou 5 role-plays esta semana!"
+                
               >
                 Nova conquista desbloqueada
               </DropdownItem>
               <DropdownItem
                 key="notification-2"
-                description="Novo role-play de objeções disponível"
+                
               >
                 Novo conteúdo disponível
               </DropdownItem>
               <DropdownItem
                 key="notification-3"
-                description="Sua pontuação aumentou 15% esta semana"
+                
               >
                 Progresso semanal
               </DropdownItem>
@@ -122,44 +107,42 @@ export function Navbar({ user }: NavbarProps) {
 
         {/* User menu */}
         <NavbarItem>
-          <Dropdown placement="bottom-end">
+          <Dropdown >
             <DropdownTrigger>
               <Avatar
                 as="button"
                 className="transition-transform"
-                color="primary"
                 name={user?.name || "Usuário"}
                 size="sm"
-                src={user?.avatar}
               />
             </DropdownTrigger>
-            <DropdownMenu aria-label="Menu do usuário" variant="flat">
+            <DropdownMenu aria-label="Menu do usuário" >
               <DropdownItem key="profile" className="h-14 gap-2">
                 <p className="font-semibold text-[#111827]">{user?.name || "Usuário"}</p>
                 <p className="text-sm text-[#6B7280]">{user?.email || "email@exemplo.com"}</p>
               </DropdownItem>
               <DropdownItem
                 key="my-profile"
-                startContent={<UserIcon className="w-4 h-4" />}
+                
               >
                 Meu Perfil
               </DropdownItem>
               <DropdownItem
                 key="metrics"
-                startContent={<ChartBarIcon className="w-4 h-4" />}
+                
               >
                 Minhas Métricas
               </DropdownItem>
               <DropdownItem
                 key="settings"
-                startContent={<Cog6ToothIcon className="w-4 h-4" />}
+                
               >
                 Configurações
               </DropdownItem>
               <DropdownItem
                 key="logout"
-                color="danger"
-                startContent={<ArrowRightOnRectangleIcon className="w-4 h-4" />}
+                
+                
               >
                 Sair
               </DropdownItem>

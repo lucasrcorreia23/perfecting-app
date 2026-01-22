@@ -241,6 +241,7 @@ export const mockRoleplays: Roleplay[] = [
     category: "behavioral",
     difficulty: "beginner",
     estimatedDuration: 10,
+    scenarioSlug: "venda-b2b",
     agent: {
       id: "agent-1",
       name: "Carlos Mendes",
@@ -267,6 +268,7 @@ export const mockRoleplays: Roleplay[] = [
     category: "objection",
     difficulty: "intermediate",
     estimatedDuration: 15,
+    scenarioSlug: "objecao-preco",
     agent: {
       id: "agent-2",
       name: "Marina Silva",
@@ -293,6 +295,7 @@ export const mockRoleplays: Roleplay[] = [
     category: "technical",
     difficulty: "intermediate",
     estimatedDuration: 20,
+    scenarioSlug: "venda-b2b",
     agent: {
       id: "agent-3",
       name: "Roberto Alves",
@@ -319,6 +322,7 @@ export const mockRoleplays: Roleplay[] = [
     category: "closing",
     difficulty: "advanced",
     estimatedDuration: 15,
+    scenarioSlug: "fechamento",
     agent: {
       id: "agent-4",
       name: "Patricia Costa",
@@ -345,6 +349,7 @@ export const mockRoleplays: Roleplay[] = [
     category: "custom",
     difficulty: "intermediate",
     estimatedDuration: 15,
+    scenarioSlug: "atendimento-cliente",
     agent: {
       id: "agent-5",
       name: "Lucas Ferreira",
@@ -371,6 +376,7 @@ export const mockRoleplays: Roleplay[] = [
     category: "behavioral",
     difficulty: "advanced",
     estimatedDuration: 10,
+    scenarioSlug: "atendimento-cliente",
     agent: {
       id: "agent-6",
       name: "Fernanda Lima",

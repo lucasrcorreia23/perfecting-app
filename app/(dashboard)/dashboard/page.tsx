@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardBody, CardHeader, Progress, Avatar, Button, Chip } from "@heroui/react";
+import { Card, CardHeader, CardBody, Button, Chip, Progress, Avatar } from "@heroui/react";
 import Link from "next/link";
 import {
   PlayCircleIcon,
@@ -12,7 +12,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { RoleplayCard } from "@/components/roleplay";
 import { mockRoleplays, mockUserMetrics, mockLeaderboard } from "@/lib/mock-data";
-import { cn, formatDuration, getScoreColor } from "@/lib/utils";
+import { cn, getScoreColor } from "@/lib/utils";
 
 export default function DashboardPage() {
   const recentRoleplays = mockRoleplays.slice(0, 3);
@@ -28,13 +28,11 @@ export default function DashboardPage() {
             Continue seu treinamento e melhore suas habilidades de vendas.
           </p>
         </div>
-        <Link href="/dashboard/roleplays">
-          <Button
-            className="bg-[#2E63CD] hover:bg-[#2451A8] text-white font-medium"
-            endContent={<PlayCircleIcon className="w-5 h-5" />}
-          >
-            Iniciar Prática
-          </Button>
+        <Link
+          href="/roleplays"
+          className="inline-flex items-center justify-center px-4 py-2 bg-[#2E63CD] hover:bg-[#2451A8] text-white font-medium rounded-lg transition-colors"
+        >
+          Iniciar Prática
         </Link>
       </div>
 
@@ -112,7 +110,7 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between">
             <h2 className="heading-3">Role-plays Sugeridos</h2>
             <Link
-              href="/dashboard/roleplays"
+              href="/roleplays"
               className="text-sm text-[#2E63CD] hover:text-[#2451A8] font-medium flex items-center gap-1"
             >
               Ver todos
@@ -125,8 +123,7 @@ export default function DashboardPage() {
               <RoleplayCard
                 key={roleplay.id}
                 roleplay={roleplay}
-                onPractice={() => window.location.href = `/dashboard/roleplays/${roleplay.id}/practice`}
-                onView={() => window.location.href = `/dashboard/roleplays/${roleplay.id}`}
+                onPractice={() => window.location.href = `/roleplays/scenario/${roleplay.scenarioSlug}`}
               />
             ))}
           </div>
@@ -175,7 +172,7 @@ export default function DashboardPage() {
                   <h3 className="text-lg font-semibold text-[#111827]">Ranking</h3>
                 </div>
                 <Link
-                  href="/dashboard/ranking"
+                  href="/ranking"
                   className="text-sm text-[#2E63CD] hover:text-[#2451A8]"
                 >
                   Ver mais

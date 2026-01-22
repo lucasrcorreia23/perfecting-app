@@ -5,11 +5,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
-  Avatar,
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
+  Avatar,
 } from "@heroui/react";
 import {
   HomeIcon,
@@ -219,91 +219,87 @@ export function Sidebar({ variant = "seller", user }: SidebarProps) {
           isCollapsed && "flex items-center justify-center"
         )}>
           {isCollapsed ? (
-            <Dropdown placement="top">
+            <Dropdown >
               <DropdownTrigger>
-                <button className="p-2 rounded-xl hover:bg-[#F5F5F5] transition-colors">
+                <div className="p-2 rounded-xl hover:bg-[#F5F5F5] transition-colors cursor-pointer">
                   <Avatar
                     className="transition-transform"
-                    color="primary"
                     name={user?.name || "Usuário"}
                     size="sm"
-                    src={user?.avatar}
                   />
-                </button>
+                </div>
               </DropdownTrigger>
-              <DropdownMenu aria-label="Menu do usuário" variant="flat">
+              <DropdownMenu aria-label="Menu do usuário" >
                 <DropdownItem key="profile" className="h-14 gap-2">
                   <p className="font-semibold text-[#111827]">{user?.name || "Usuário"}</p>
                   <p className="text-sm text-[#6B7280]">{user?.email || "email@exemplo.com"}</p>
                 </DropdownItem>
                 <DropdownItem
                   key="my-profile"
-                  startContent={<UserIcon className="w-4 h-4" />}
+                  
                 >
                   Meu Perfil
                 </DropdownItem>
                 <DropdownItem
                   key="metrics"
-                  startContent={<ChartBarIcon className="w-4 h-4" />}
+                  
                 >
                   Minhas Métricas
                 </DropdownItem>
                 <DropdownItem
                   key="settings"
-                  startContent={<Cog6ToothIcon className="w-4 h-4" />}
+                  
                 >
                   Configurações
                 </DropdownItem>
                 <DropdownItem
                   key="logout"
-                  color="danger"
-                  startContent={<ArrowRightOnRectangleIcon className="w-4 h-4" />}
+                  
+                  
                 >
                   Sair
                 </DropdownItem>
               </DropdownMenu>
             </Dropdown>
           ) : (
-            <Dropdown placement="top">
+            <Dropdown >
               <DropdownTrigger>
-                <button className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-[#F5F5F5] transition-colors">
+                <div className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-[#F5F5F5] transition-colors cursor-pointer">
                   <Avatar
                     className="transition-transform"
-                    color="primary"
                     name={user?.name || "Usuário"}
                     size="sm"
-                    src={user?.avatar}
                   />
                   <div className="flex-1 text-left min-w-0">
                     <p className="text-sm font-medium text-[#111827] truncate">{user?.name || "Usuário"}</p>
                     <p className="text-xs text-[#6B7280] truncate">{user?.email || "email@exemplo.com"}</p>
                   </div>
                   <ChevronDownIcon className="w-4 h-4 text-[#6B7280] flex-shrink-0" />
-                </button>
+                </div>
               </DropdownTrigger>
-              <DropdownMenu aria-label="Menu do usuário" variant="flat">
+              <DropdownMenu aria-label="Menu do usuário" >
                 <DropdownItem
                   key="my-profile"
-                  startContent={<UserIcon className="w-4 h-4" />}
+                  
                 >
                   Meu Perfil
                 </DropdownItem>
                 <DropdownItem
                   key="metrics"
-                  startContent={<ChartBarIcon className="w-4 h-4" />}
+                  
                 >
                   Minhas Métricas
                 </DropdownItem>
                 <DropdownItem
                   key="settings"
-                  startContent={<Cog6ToothIcon className="w-4 h-4" />}
+                  
                 >
                   Configurações
                 </DropdownItem>
                 <DropdownItem
                   key="logout"
-                  color="danger"
-                  startContent={<ArrowRightOnRectangleIcon className="w-4 h-4" />}
+                  
+                  
                 >
                   Sair
                 </DropdownItem>

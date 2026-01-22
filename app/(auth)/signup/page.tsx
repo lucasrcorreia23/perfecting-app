@@ -113,8 +113,8 @@ export default function SignupPage() {
                   id="teamSize"
                   label="Tamanho do time de vendas"
                   placeholder="Selecione"
-                  selectedKeys={teamSize ? [teamSize] : []}
-                  onSelectionChange={(keys) => setTeamSize(Array.from(keys)[0] as string)}
+                  selectedKey={teamSize || undefined}
+                  onSelectionChange={(key: any) => setTeamSize(key as string)}
                   isRequired
                 >
                   {teamSizes.map((size) => (
@@ -178,7 +178,6 @@ export default function SignupPage() {
                 <div className="flex gap-3 mt-6">
                   <Button
                     type="button"
-                    variant="bordered"
                     className="flex-1 border-[#E5E7EB] text-[#1F2937] hover:bg-[#F5F5F5] font-medium h-12"
                     onPress={() => setStep(1)}
                   >
@@ -187,10 +186,9 @@ export default function SignupPage() {
                   <Button
                     type="submit"
                     className="flex-1 bg-[#2E63CD] hover:bg-[#2451A8] text-white font-medium h-12"
-                    isLoading={isLoading}
-                    isDisabled={password !== confirmPassword}
+                    isDisabled={isLoading || password !== confirmPassword}
                   >
-                    Criar conta
+                    {isLoading ? "Criando..." : "Criar conta"}
                   </Button>
                 </div>
               </form>

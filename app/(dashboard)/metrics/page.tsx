@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardBody, CardHeader, Progress, Chip, Select, SelectItem } from "@heroui/react";
+import { Card, CardHeader, CardBody, Chip, Progress, Select, SelectItem } from "@heroui/react";
 import { useState } from "react";
 import {
   ChartBarIcon,
@@ -12,7 +12,7 @@ import {
   CalendarIcon,
 } from "@heroicons/react/24/outline";
 import { mockUserMetrics, mockFeedback } from "@/lib/mock-data";
-import { cn, getScoreColor, formatDuration } from "@/lib/utils";
+import { cn, getScoreColor } from "@/lib/utils";
 
 const timeRanges = [
   { value: "7d", label: "Últimos 7 dias" },
@@ -41,14 +41,14 @@ export default function MetricsPage() {
         </div>
 
         <Select
-          selectedKeys={[timeRange]}
+          selectedKeys={new Set([timeRange])}
           onSelectionChange={(keys) => setTimeRange(Array.from(keys)[0] as string)}
-          variant="bordered"
+          className="w-48"
+          aria-label="Período"
           classNames={{
-            base: "w-48",
-            trigger: "border-[#E5E7EB] hover:border-[#2E63CD]",
+            trigger: "bg-white border border-[#E5E7EB] rounded-xl px-4 py-2.5 hover:border-[#C5D4ED] hover:bg-[#FAFAFA] transition-all duration-200 min-h-[44px]",
+            value: "text-[#1F2937] font-medium",
           }}
-          startContent={<CalendarIcon className="w-4 h-4 text-[#6B7280]" />}
         >
           {timeRanges.map((range) => (
             <SelectItem key={range.value}>{range.label}</SelectItem>
@@ -167,7 +167,6 @@ export default function MetricsPage() {
                   <div className="relative">
                     <Progress
                       value={week.averageScore}
-                      maxValue={100}
                       color={week.averageScore >= 80 ? "success" : week.averageScore >= 60 ? "warning" : "danger"}
                       className="h-3"
                     />
@@ -199,7 +198,6 @@ export default function MetricsPage() {
                     </div>
                     <Progress
                       value={percentage}
-                      maxValue={100}
                       color={percentage >= 80 ? "success" : percentage >= 60 ? "warning" : "danger"}
                       className="h-2"
                     />

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Input, Select, SelectItem, Chip, Button } from "@heroui/react";
+import { Input, Chip, Button, Select, SelectItem } from "@heroui/react";
+
 import { useRouter } from "next/navigation";
 import { MagnifyingGlassIcon, FunnelIcon, Squares2X2Icon, ListBulletIcon } from "@heroicons/react/24/outline";
 import { RoleplayCard } from "@/components/roleplay";
@@ -49,12 +50,8 @@ export default function RoleplaysPage() {
     });
   }, [searchQuery, selectedCategory, selectedDifficulty]);
 
-  const handlePractice = (roleplayId: string) => {
-    router.push(`/roleplays/${roleplayId}/practice`);
-  };
-
-  const handleView = (roleplayId: string) => {
-    router.push(`/roleplays/${roleplayId}`);
+  const handlePractice = (roleplay: any) => {
+    router.push(`/roleplays/scenario/${roleplay.scenarioSlug}`);
   };
 
   return (
@@ -72,20 +69,21 @@ export default function RoleplaysPage() {
         <Input
           placeholder="Buscar por título, descrição ou agente..."
           value={searchQuery}
-          onValueChange={setSearchQuery}
-          startContent={<MagnifyingGlassIcon className="w-5 h-5 text-[#6B7280]" />}
-          variant="bordered"
+          onChange={(e) => setSearchQuery(e.target.value)}
           className="max-w-md"
         />
 
         <div className="flex flex-wrap gap-4">
           <Select
             placeholder="Categoria"
-            selectedKeys={[selectedCategory]}
+            selectedKeys={new Set([selectedCategory])}
             onSelectionChange={(keys) => setSelectedCategory(Array.from(keys)[0] as string)}
-            variant="bordered"
             className="w-48"
-            startContent={<FunnelIcon className="w-4 h-4 text-[#6B7280]" />}
+            aria-label="Categoria"
+            classNames={{
+              trigger: "bg-white border border-[#E5E7EB] rounded-xl px-4 py-2.5 hover:border-[#C5D4ED] hover:bg-[#FAFAFA] transition-all duration-200 min-h-[44px]",
+              value: "text-[#1F2937] font-medium",
+            }}
           >
             {categories.map((category) => (
               <SelectItem key={category.value}>{category.label}</SelectItem>
@@ -94,10 +92,14 @@ export default function RoleplaysPage() {
 
           <Select
             placeholder="Dificuldade"
-            selectedKeys={[selectedDifficulty]}
+            selectedKeys={new Set([selectedDifficulty])}
             onSelectionChange={(keys) => setSelectedDifficulty(Array.from(keys)[0] as string)}
-            variant="bordered"
             className="w-48"
+            aria-label="Dificuldade"
+            classNames={{
+              trigger: "bg-white border border-[#E5E7EB] rounded-xl px-4 py-2.5 hover:border-[#C5D4ED] hover:bg-[#FAFAFA] transition-all duration-200 min-h-[44px]",
+              value: "text-[#1F2937] font-medium",
+            }}
           >
             {difficulties.map((difficulty) => (
               <SelectItem key={difficulty.value}>{difficulty.label}</SelectItem>
@@ -108,19 +110,15 @@ export default function RoleplaysPage() {
           <div className="flex items-center border border-[#E5E7EB] rounded-lg overflow-hidden">
             <Button
               isIconOnly
-              variant={viewMode === "grid" ? "solid" : "light"}
               className={viewMode === "grid" ? "bg-[#2E63CD] text-white" : "text-[#6B7280]"}
               onPress={() => setViewMode("grid")}
-              radius="none"
             >
               <Squares2X2Icon className="w-5 h-5" />
             </Button>
             <Button
               isIconOnly
-              variant={viewMode === "list" ? "solid" : "light"}
               className={viewMode === "list" ? "bg-[#2E63CD] text-white" : "text-[#6B7280]"}
               onPress={() => setViewMode("list")}
-              radius="none"
             >
               <ListBulletIcon className="w-5 h-5" />
             </Button>
@@ -134,7 +132,6 @@ export default function RoleplaysPage() {
           <span className="text-sm text-[#6B7280]">Filtros ativos:</span>
           {searchQuery && (
             <Chip
-              onClose={() => setSearchQuery("")}
               variant="flat"
               color="primary"
               size="sm"
@@ -144,7 +141,6 @@ export default function RoleplaysPage() {
           )}
           {selectedCategory !== "all" && (
             <Chip
-              onClose={() => setSelectedCategory("all")}
               variant="flat"
               size="sm"
               style={{
@@ -157,7 +153,6 @@ export default function RoleplaysPage() {
           )}
           {selectedDifficulty !== "all" && (
             <Chip
-              onClose={() => setSelectedDifficulty("all")}
               variant="flat"
               color="default"
               size="sm"
@@ -167,7 +162,7 @@ export default function RoleplaysPage() {
           )}
           <Button
             size="sm"
-            variant="light"
+            variant="ghost"
             className="text-[#6B7280]"
             onPress={() => {
               setSearchQuery("");
@@ -198,8 +193,7 @@ export default function RoleplaysPage() {
             <RoleplayCard
               key={roleplay.id}
               roleplay={roleplay}
-              onPractice={() => handlePractice(roleplay.id)}
-              onView={() => handleView(roleplay.id)}
+              onPractice={() => handlePractice(roleplay)}
             />
           ))}
         </div>
@@ -213,7 +207,6 @@ export default function RoleplaysPage() {
             Tente ajustar os filtros ou buscar por outros termos
           </p>
           <Button
-            variant="bordered"
             className="border-[#2E63CD] text-[#2E63CD]"
             onPress={() => {
               setSearchQuery("");

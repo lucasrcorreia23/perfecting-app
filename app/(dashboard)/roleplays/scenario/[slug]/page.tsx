@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Avatar, Button, Card, CardBody, Chip, Progress } from "@heroui/react";
+import { Button, Card, CardBody, Chip, Progress, Avatar, Ripple } from "@heroui/react";
 import {
   PhoneIcon,
   XMarkIcon,
@@ -199,7 +199,7 @@ export default function ScenarioPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
         <p className="text-[#6B7280]">Cenario nao encontrado</p>
-        <Button color="primary" onPress={() => router.push("/roleplays")}>
+        <Button  onPress={() => router.push("/roleplays")}>
           Voltar para Role-plays
         </Button>
       </div>
@@ -213,7 +213,6 @@ export default function ScenarioPage() {
       <div className="space-y-6">
         <div className="flex items-start gap-4">
           <Avatar
-            src={selectedCharacter.avatar}
             name={selectedCharacter.name}
             className="w-16 h-16 text-xl flex-shrink-0"
           />
@@ -301,13 +300,14 @@ export default function ScenarioPage() {
               {scenario.characters.map((character) => (
                 <Card
                   key={character.id}
-                  isPressable={!isInCall}
+                  isPressable
+                  disableRipple={false}
                   onPress={() => handleSelectCharacter(character)}
                   className={cn(
-                    "transition-all duration-200 w-full rounded-2xl",
+                    "transition-all duration-200 w-full rounded-2xl overflow-hidden cursor-pointer",
                     selectedCharacter?.id === character.id
-                      ? "bg-[#F0F4FA] border border-[#C5D4ED]"
-                      : "bg-[#FAFAFA] hover:bg-white border border-[#E5E7EB]"
+                      ? "bg-[#F0F4FA] border-2 border-[#2E63CD] shadow-md"
+                      : "bg-[#FAFAFA] hover:bg-white border border-[#E5E7EB] hover:border-[#C5D4ED]"
                   )}
                 >
                   <CardBody className="p-4 relative">
@@ -324,7 +324,6 @@ export default function ScenarioPage() {
                     </Chip>
                     <div className="flex items-start gap-3 pr-20">
                       <Avatar
-                        src={character.avatar}
                         name={character.name}
                         className="w-12 h-12 flex-shrink-0"
                       />
@@ -456,12 +455,12 @@ export default function ScenarioPage() {
                 <div className="flex-shrink-0 p-6 border-t border-[#E5E7EB] bg-[#FAFAFA] relative z-10">
                   <div className="max-w-2xl mx-auto flex justify-center">
                     <Button
-                      color="success"
+                      
                       size="lg"
-                      startContent={<PhoneIcon className="w-5 h-5" />}
                       onPress={handleStartCall}
                       className="px-12"
                     >
+                      <PhoneIcon className="w-5 h-5" />
                       Iniciar Chamada
                     </Button>
                   </div>
@@ -487,7 +486,6 @@ export default function ScenarioPage() {
                   <div className="relative inline-block mb-6">
                     <div className="absolute inset-0 rounded-full bg-[#2E63CD]/10 animate-ping" />
                     <Avatar
-                      src={selectedCharacter.avatar}
                       name={selectedCharacter.name}
                       className="w-32 h-32 text-3xl"
                     />
@@ -496,12 +494,11 @@ export default function ScenarioPage() {
                     Conectando com {selectedCharacter.name}...
                   </h3>
                   <p className="text-[#6B7280] mb-6">{selectedCharacter.role}</p>
-                  <Progress
-                    size="sm"
-                    isIndeterminate
-                    color="primary"
-                    className="max-w-xs"
-                  />
+                  <div className="max-w-xs w-full">
+                    <div className="h-1 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="h-full bg-[#2E63CD] animate-pulse w-full" />
+                    </div>
+                  </div>
                 </div>
               </div>
             ) : connectionStatus === "connected" ? (
@@ -540,7 +537,6 @@ export default function ScenarioPage() {
                       )}
                     />
                     <Avatar
-                      src={selectedCharacter.avatar}
                       name={selectedCharacter.name}
                       className="w-32 h-32 text-4xl ring-4 ring-offset-4 ring-[#2E63CD]"
                     />
@@ -564,10 +560,9 @@ export default function ScenarioPage() {
                         key={i}
                         className={cn(
                           "w-1.5 rounded-full bg-[#2E63CD] transition-all",
-                          (isSpeaking || isListening) && "waveform-bar"
+                          (isSpeaking || isListening) ? "waveform-bar" : "h-2"
                         )}
                         style={{
-                          height: (isSpeaking || isListening) ? `${Math.random() * 40 + 12}px` : "8px",
                           animationDelay: `${i * 0.08}s`,
                         }}
                       />
@@ -648,7 +643,6 @@ export default function ScenarioPage() {
                 <div className="relative z-10 flex flex-col items-center">
                   <div className="relative inline-block mb-6">
                     <Avatar
-                      src={selectedCharacter.avatar}
                       name={selectedCharacter.name}
                       className="w-32 h-32 text-3xl opacity-50"
                     />
@@ -660,8 +654,6 @@ export default function ScenarioPage() {
                     Duracao: {formatDuration(duration)}
                   </p>
                   <Button
-                    color="primary"
-                    variant="bordered"
                     onPress={() => setConnectionStatus("idle")}
                   >
                     Ver detalhes do personagem
@@ -678,7 +670,7 @@ export default function ScenarioPage() {
                 <h3 className="font-medium text-[#111827]">Informacoes</h3>
                 <Button
                   isIconOnly
-                  variant="light"
+                  variant="ghost"
                   size="sm"
                   onPress={() => setShowInfoPanel(false)}
                 >

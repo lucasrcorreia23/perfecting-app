@@ -1,16 +1,6 @@
 "use client";
 
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  Progress,
-  Chip,
-  Divider,
-  Button,
-  Accordion,
-  AccordionItem,
-} from "@heroui/react";
+import { Card, CardHeader, CardBody, Chip, Button, Accordion, AccordionItem, Progress } from "@heroui/react";
 import {
   CheckCircleIcon,
   ExclamationCircleIcon,
@@ -169,7 +159,7 @@ export function FeedbackPanel({
                 <Chip
                   size="sm"
                   variant="flat"
-                  color="primary"
+                  color="default"
                   className="font-medium"
                 >
                   {index + 1}
@@ -182,15 +172,11 @@ export function FeedbackPanel({
       </Card>
 
       {/* Transcript */}
-      <Accordion variant="bordered" className="bg-white">
+      <Accordion variant="light" className="bg-white">
         <AccordionItem
           key="transcript"
           aria-label="Ver transcrição completa"
-          title={
-            <span className="text-lg font-semibold text-[#111827]">
-              Transcrição Completa
-            </span>
-          }
+          
         >
           <div className="space-y-4 pb-4">
             {transcript.map((entry) => (
@@ -216,23 +202,21 @@ export function FeedbackPanel({
       {/* Action buttons */}
       <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
         <Button
-          variant="bordered"
-          startContent={<DocumentArrowDownIcon className="w-5 h-5" />}
           onPress={onExport}
           className="border-[#E5E7EB] text-[#1F2937] hover:bg-[#F5F5F5] font-medium"
         >
+          <DocumentArrowDownIcon className="w-5 h-5" />
           Exportar Transcrição
         </Button>
         <Button
-          variant="bordered"
-          startContent={<ArrowPathIcon className="w-5 h-5" />}
           onPress={onRetry}
           className="border-[#2E63CD] text-[#2E63CD] hover:bg-[#EBF0FA] font-medium"
         >
+          <ArrowPathIcon className="w-5 h-5" />
           Tentar Novamente
         </Button>
         <Button
-          endContent={<ArrowRightIcon className="w-5 h-5" />}
+          
           onPress={onNext}
           className="bg-[#2E63CD] hover:bg-[#2451A8] text-white font-medium"
         >

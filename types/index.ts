@@ -56,6 +56,7 @@ export interface Roleplay {
   category: RoleplayCategory;
   difficulty: "beginner" | "intermediate" | "advanced";
   estimatedDuration: number;
+  scenarioSlug: string;
   agent: RoleplayAgent;
   objectives: string[];
   tags: string[];

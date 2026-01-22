@@ -1,33 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  Button,
-  Input,
-  Avatar,
-  Chip,
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Select,
-  SelectItem,
-  Pagination,
-} from "@heroui/react";
+import { Card, CardHeader, CardBody, Button, Input, Chip, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Pagination, Avatar, Select, SelectItem } from "@heroui/react";
 import {
   MagnifyingGlassIcon,
   PlusIcon,
@@ -112,11 +86,11 @@ export default function UsersPage() {
         </div>
 
         <Button
-          color="primary"
+          
           className="bg-[#2E63CD] hover:bg-[#2451A8]"
-          startContent={<PlusIcon className="w-5 h-5" />}
           onPress={() => setIsAddModalOpen(true)}
         >
+          <PlusIcon className="w-5 h-5" />
           Adicionar Usuário
         </Button>
       </div>
@@ -128,20 +102,22 @@ export default function UsersPage() {
             <Input
               placeholder="Buscar por nome ou e-mail..."
               value={searchQuery}
-              onValueChange={setSearchQuery}
-              startContent={<MagnifyingGlassIcon className="w-5 h-5 text-[#6B7280]" />}
-              variant="bordered"
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="max-w-sm"
             />
+            <MagnifyingGlassIcon className="w-5 h-5 text-[#6B7280] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
 
             <div className="flex flex-wrap gap-4">
               <Select
                 placeholder="Grupo"
-                selectedKeys={[selectedGroup]}
+                selectedKeys={new Set([selectedGroup])}
                 onSelectionChange={(keys) => setSelectedGroup(Array.from(keys)[0] as string)}
-                variant="bordered"
                 className="w-44"
-                startContent={<FunnelIcon className="w-4 h-4 text-[#6B7280]" />}
+                aria-label="Grupo"
+                classNames={{
+                  trigger: "bg-white border border-[#E5E7EB] rounded-xl px-4 py-2.5 hover:border-[#C5D4ED] hover:bg-[#FAFAFA] transition-all duration-200 min-h-[44px]",
+                  value: "text-[#1F2937] font-medium",
+                }}
               >
                 {groups.map((group) => (
                   <SelectItem key={group.value}>{group.label}</SelectItem>
@@ -150,10 +126,14 @@ export default function UsersPage() {
 
               <Select
                 placeholder="Status"
-                selectedKeys={[selectedStatus]}
+                selectedKeys={new Set([selectedStatus])}
                 onSelectionChange={(keys) => setSelectedStatus(Array.from(keys)[0] as string)}
-                variant="bordered"
                 className="w-36"
+                aria-label="Status"
+                classNames={{
+                  trigger: "bg-white border border-[#E5E7EB] rounded-xl px-4 py-2.5 hover:border-[#C5D4ED] hover:bg-[#FAFAFA] transition-all duration-200 min-h-[44px]",
+                  value: "text-[#1F2937] font-medium",
+                }}
               >
                 {statusOptions.map((status) => (
                   <SelectItem key={status.value}>{status.label}</SelectItem>
@@ -176,26 +156,7 @@ export default function UsersPage() {
         <CardBody className="p-0">
           <Table
             aria-label="Tabela de usuários"
-            removeWrapper
-            classNames={{
-              th: "bg-[#F9FAFB] text-[#6B7280] font-medium",
-              td: "py-4",
-            }}
-            bottomContent={
-              pages > 1 ? (
-                <div className="flex w-full justify-center py-4">
-                  <Pagination
-                    isCompact
-                    showControls
-                    showShadow
-                    color="primary"
-                    page={page}
-                    total={pages}
-                    onChange={setPage}
-                  />
-                </div>
-              ) : null
-            }
+            className="w-full"
           >
             <TableHeader>
               <TableColumn>USUÁRIO</TableColumn>
@@ -212,7 +173,6 @@ export default function UsersPage() {
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <Avatar
-                        src={user.userAvatar}
                         name={user.userName}
                         size="sm"
                       />
@@ -226,7 +186,7 @@ export default function UsersPage() {
                     <Chip
                       size="sm"
                       variant="flat"
-                      color={user.role === "admin" ? "secondary" : "default"}
+                      color={user.role === "admin" ? "primary" : "default"}
                     >
                       {user.role === "admin" ? "Admin" : "Vendedor"}
                     </Chip>
@@ -258,7 +218,7 @@ export default function UsersPage() {
                   <TableCell>
                     <Dropdown>
                       <DropdownTrigger>
-                        <Button isIconOnly variant="light" size="sm">
+                        <Button isIconOnly variant="ghost" size="sm">
                           <EllipsisVerticalIcon className="w-5 h-5 text-[#6B7280]" />
                         </Button>
                       </DropdownTrigger>
@@ -267,7 +227,7 @@ export default function UsersPage() {
                         <DropdownItem key="edit">Editar</DropdownItem>
                         <DropdownItem key="metrics">Ver métricas</DropdownItem>
                         <DropdownItem key="reset">Resetar senha</DropdownItem>
-                        <DropdownItem key="deactivate" className="text-danger" color="danger">
+                        <DropdownItem key="deactivate" className="text-danger" >
                           Desativar
                         </DropdownItem>
                       </DropdownMenu>
@@ -277,14 +237,22 @@ export default function UsersPage() {
               ))}
             </TableBody>
           </Table>
+          {pages > 1 && (
+            <div className="flex w-full justify-center py-4">
+              <Pagination
+                page={page}
+                total={pages}
+                onChange={setPage}
+              />
+            </div>
+          )}
         </CardBody>
       </Card>
 
       {/* Add User Modal */}
       <Modal
         isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-        size="lg"
+        
       >
         <ModalContent>
           <ModalHeader className="border-b border-[#E5E7EB]">
@@ -292,47 +260,61 @@ export default function UsersPage() {
           </ModalHeader>
           <ModalBody className="py-6">
             <div className="space-y-4">
-              <Input
-                label="Nome completo"
-                placeholder="Nome do usuário"
-                variant="bordered"
-                startContent={<UserIcon className="w-5 h-5 text-[#6B7280]" />}
-              />
-              <Input
-                label="E-mail"
-                placeholder="email@empresa.com"
-                type="email"
-                variant="bordered"
-                startContent={<EnvelopeIcon className="w-5 h-5 text-[#6B7280]" />}
-              />
-              <Select
-                label="Função"
-                placeholder="Selecione a função"
-                variant="bordered"
-              >
-                <SelectItem key="seller">Vendedor</SelectItem>
-                <SelectItem key="admin">Administrador</SelectItem>
-              </Select>
-              <Select
-                label="Grupo"
-                placeholder="Selecione o grupo"
-                variant="bordered"
-              >
-                <SelectItem key="comercial">Equipe Comercial</SelectItem>
-                <SelectItem key="inside-sales">Inside Sales</SelectItem>
-                <SelectItem key="enterprise">Enterprise</SelectItem>
-              </Select>
+              <div>
+                <label className="block text-sm font-medium mb-2">Nome completo</label>
+                <Input
+                  placeholder="Nome do usuário"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">E-mail</label>
+                <Input
+                  placeholder="email@empresa.com"
+                  type="email"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Função</label>
+                <Select
+                  placeholder="Selecione a função"
+                  className="w-full"
+                  aria-label="Função"
+                  classNames={{
+                    trigger: "bg-white border border-[#E5E7EB] rounded-xl px-4 py-2.5 hover:border-[#C5D4ED] hover:bg-[#FAFAFA] transition-all duration-200 min-h-[44px]",
+                    value: "text-[#1F2937] font-medium",
+                  }}
+                >
+                  <SelectItem key="seller">Vendedor</SelectItem>
+                  <SelectItem key="admin">Administrador</SelectItem>
+                </Select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Grupo</label>
+                <Select
+                  placeholder="Selecione o grupo"
+                  className="w-full"
+                  aria-label="Grupo"
+                  classNames={{
+                    trigger: "bg-white border border-[#E5E7EB] rounded-xl px-4 py-2.5 hover:border-[#C5D4ED] hover:bg-[#FAFAFA] transition-all duration-200 min-h-[44px]",
+                    value: "text-[#1F2937] font-medium",
+                  }}
+                >
+                  <SelectItem key="comercial">Equipe Comercial</SelectItem>
+                  <SelectItem key="inside-sales">Inside Sales</SelectItem>
+                  <SelectItem key="enterprise">Enterprise</SelectItem>
+                </Select>
+              </div>
             </div>
           </ModalBody>
           <ModalFooter className="border-t border-[#E5E7EB]">
             <Button
-              variant="light"
+              variant="ghost"
               onPress={() => setIsAddModalOpen(false)}
             >
               Cancelar
             </Button>
             <Button
-              color="primary"
+              
               className="bg-[#2E63CD] hover:bg-[#2451A8]"
               onPress={() => setIsAddModalOpen(false)}
             >

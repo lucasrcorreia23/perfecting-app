@@ -1,4 +1,4 @@
-import type { VoiceConfig, ConversationState } from "@/types";
+import type { VoiceConfig } from "@/types";
 
 const ELEVENLABS_API_URL = "https://api.elevenlabs.io/v1";
 

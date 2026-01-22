@@ -7,7 +7,18 @@
       "WebSearch",
       "WebFetch(domain:www.heroui.com)",
       "Bash(npx tsc:*)",
-      "Bash(npm run clean:*)"
+      "Bash(npm run clean:*)",
+      "Bash(npm run dev:*)",
+      "Bash(taskkill:*)",
+      "Bash(npm ls:*)",
+      "Bash(node -e:*)",
+      "Bash(npm search:*)",
+      "WebFetch(domain:v3.heroui.com)",
+      "Bash(timeout /t 1)",
+      "Bash(curl:*)",
+      "Bash(grep:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(find:*)"
     ]
   }
 }

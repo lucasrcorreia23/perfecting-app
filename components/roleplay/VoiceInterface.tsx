@@ -1,10 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Button, Avatar, Progress, Chip } from "@heroui/react";
+import { Button, Chip, Progress, Avatar } from "@heroui/react";
 import {
   MicrophoneIcon,
-  StopIcon,
   PauseIcon,
   PlayIcon,
   XMarkIcon,
@@ -95,7 +94,7 @@ export function VoiceInterface({ agent, onEnd, onTranscriptUpdate }: VoiceInterf
     return "Conectado";
   };
 
-  const getStatusColor = () => {
+  const getStatusColor = (): "default" | "danger" | "warning" | "success" | "primary" => {
     if (connectionStatus === "connecting") return "warning";
     if (connectionStatus === "error") return "danger";
     if (conversationState.isSpeaking) return "primary";
@@ -123,7 +122,6 @@ export function VoiceInterface({ agent, onEnd, onTranscriptUpdate }: VoiceInterf
           )}
         />
         <Avatar
-          src={agent.avatar}
           name={agent.name}
           className="w-32 h-32 text-2xl ring-4 ring-offset-4 ring-[#2E63CD] transition-all duration-300"
         />
@@ -152,9 +150,6 @@ export function VoiceInterface({ agent, onEnd, onTranscriptUpdate }: VoiceInterf
                 : "h-2"
             )}
             style={{
-              height: conversationState.isSpeaking || conversationState.isListening
-                ? `${Math.random() * 48 + 16}px`
-                : "8px",
               animationDelay: `${i * 0.1}s`,
             }}
           />
@@ -171,11 +166,9 @@ export function VoiceInterface({ agent, onEnd, onTranscriptUpdate }: VoiceInterf
         {/* Mute button */}
         <Button
           isIconOnly
-          variant={isMuted ? "solid" : "bordered"}
-          color={isMuted ? "danger" : "default"}
           className={cn(
             "w-14 h-14 rounded-full",
-            isMuted && "text-white"
+            isMuted ? "bg-red-500 text-white" : "bg-gray-200"
           )}
           onPress={handleToggleMute}
           isDisabled={connectionStatus !== "connected"}
@@ -187,8 +180,7 @@ export function VoiceInterface({ agent, onEnd, onTranscriptUpdate }: VoiceInterf
         {/* End call button */}
         <Button
           isIconOnly
-          color="danger"
-          className="w-16 h-16 rounded-full text-white"
+          className="w-16 h-16 rounded-full bg-red-500 text-white"
           onPress={handleEndCall}
           aria-label="Encerrar chamada"
         >
@@ -198,11 +190,9 @@ export function VoiceInterface({ agent, onEnd, onTranscriptUpdate }: VoiceInterf
         {/* Pause button */}
         <Button
           isIconOnly
-          variant={isPaused ? "solid" : "bordered"}
-          color={isPaused ? "warning" : "default"}
           className={cn(
             "w-14 h-14 rounded-full",
-            isPaused && "text-white"
+            isPaused ? "bg-yellow-500 text-white" : "bg-gray-200"
           )}
           onPress={handleTogglePause}
           isDisabled={connectionStatus !== "connected"}
@@ -236,13 +226,11 @@ export function VoiceInterface({ agent, onEnd, onTranscriptUpdate }: VoiceInterf
 
       {/* Connection progress */}
       {connectionStatus === "connecting" && (
-        <Progress
-          size="sm"
-          isIndeterminate
-          color="primary"
-          className="max-w-xs"
-          aria-label="Conectando"
-        />
+        <div className="max-w-xs w-full">
+          <div className="h-1 bg-gray-200 rounded-full overflow-hidden">
+            <div className="h-full bg-[#2E63CD] animate-pulse w-full" />
+          </div>
+        </div>
       )}
     </div>
   );

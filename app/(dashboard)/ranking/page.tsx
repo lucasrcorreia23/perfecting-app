@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardBody, CardHeader, Avatar, Chip, Select, SelectItem, Input } from "@heroui/react";
+import { Card, CardHeader, CardBody, Chip, Input, Select, SelectItem, Avatar } from "@heroui/react";
 import { useState } from "react";
 import {
   TrophyIcon,
@@ -113,10 +113,15 @@ export default function RankingPage() {
         </div>
 
         <Select
-          selectedKeys={[timeRange]}
+          selectedKeys={new Set([timeRange])}
           onSelectionChange={(keys) => setTimeRange(Array.from(keys)[0] as string)}
-          variant="bordered"
           className="w-48"
+          placeholder="Selecione o período"
+          aria-label="Período"
+          classNames={{
+            trigger: "bg-white border border-[#E5E7EB] rounded-xl px-4 py-2.5 hover:border-[#C5D4ED] hover:bg-[#FAFAFA] transition-all duration-200 min-h-[44px]",
+            value: "text-[#1F2937] font-medium",
+          }}
         >
           {timeRanges.map((range) => (
             <SelectItem key={range.value}>{range.label}</SelectItem>
@@ -216,15 +221,15 @@ export default function RankingPage() {
                 Classificação Completa
               </h3>
             </div>
-            <Input
-              placeholder="Buscar participante..."
-              value={searchQuery}
-              onValueChange={setSearchQuery}
-              startContent={<MagnifyingGlassIcon className="w-4 h-4 text-[#6B7280]" />}
-              variant="bordered"
-              className="max-w-xs"
-              size="sm"
-            />
+            <div className="relative max-w-xs">
+              <MagnifyingGlassIcon className="w-4 h-4 text-[#6B7280] absolute left-3 top-1/2 -translate-y-1/2 z-10" />
+              <Input
+                placeholder="Buscar participante..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9"
+              />
+            </div>
           </div>
         </CardHeader>
         <CardBody className="p-0">
@@ -275,8 +280,8 @@ export default function RankingPage() {
                     size="sm"
                     color="success"
                     variant="flat"
-                    startContent={<ArrowTrendingUpIcon className="w-3 h-3" />}
                   >
+                    <ArrowTrendingUpIcon className="w-3 h-3 inline-block mr-1" />
                     +{entry.improvement}%
                   </Chip>
                 </div>

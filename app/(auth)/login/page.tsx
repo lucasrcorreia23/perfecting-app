@@ -10,8 +10,7 @@ import {
   EyeSlashIcon, 
   SparklesIcon, 
   ChartBarIcon, 
-  UserGroupIcon,
-  CheckCircleIcon 
+  UserGroupIcon 
 } from "@heroicons/react/24/outline";
 
 export default function LoginPage() {
@@ -152,10 +151,7 @@ export default function LoginPage() {
                 <Checkbox
                   isSelected={rememberMe}
                   onValueChange={setRememberMe}
-                  size="sm"
-                  classNames={{
-                    label: "text-sm text-[#6B7280]",
-                  }}
+                  className="text-sm text-[#6B7280]"
                 >
                   Lembrar de mim
                 </Checkbox>
@@ -170,9 +166,9 @@ export default function LoginPage() {
             <Button
               type="submit"
               className="w-full bg-[#2E63CD] hover:bg-[#2451A8] text-white font-medium h-12 mt-6"
-              isLoading={isLoading}
+              isDisabled={isLoading}
             >
-              Entrar
+              {isLoading ? "Entrando..." : "Entrar"}
             </Button>
           </form>
 
