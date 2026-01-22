@@ -36,6 +36,32 @@ export function FormInput({
         endContent={endContent}
         isInvalid={isInvalid}
         errorMessage={errorMessage}
+        classNames={{
+          inputWrapper: [
+            "min-h-[48px]",
+            "bg-white",
+            "border-2",
+            "border-[#E5E7EB]",
+            "hover:border-[#D1D5DB]",
+            "data-[focus=true]:border-[#2E63CD]",
+            "data-[focus=true]:bg-[#EBF0FA]",
+            "rounded-xl",
+            "shadow-none",
+            "transition-all",
+            "duration-200",
+          ],
+          input: [
+            "text-[#1F2937]",
+            "placeholder:text-[#9CA3AF]",
+            "!border-0",
+            "!outline-none",
+            "!shadow-none",
+            endContent ? "pr-2" : "",
+          ],
+          innerWrapper: [
+            endContent ? "gap-2" : "",
+          ],
+        }}
         {...props}
       />
     </div>

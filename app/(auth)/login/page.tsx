@@ -1,35 +1,31 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Checkbox } from "@heroui/react";
+import { Button, Checkbox, Spinner } from "@heroui/react";
 import { FormInput } from "@/components/ui";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { 
-  EyeIcon, 
-  EyeSlashIcon, 
-  SparklesIcon, 
-  ChartBarIcon, 
-  UserGroupIcon 
+import { useAuth } from "@/contexts";
+import {
+  EyeIcon,
+  EyeSlashIcon,
+  SparklesIcon,
+  ChartBarIcon,
+  UserGroupIcon,
+  ShieldCheckIcon,
+  UserIcon,
 } from "@heroicons/react/24/outline";
 
 export default function LoginPage() {
-  const router = useRouter();
+  const { login, isLoading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isVisible, setIsVisible] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [userType, setUserType] = useState<"seller" | "admin">("seller");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-
-    // Simulate login
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    // Redirect to dashboard
-    router.push("/dashboard");
+    await login(email, password, userType);
   };
 
   return (
@@ -106,11 +102,41 @@ export default function LoginPage() {
 
           {/* Form header */}
           <div className="mb-8">
-            <h2 className="text-3xl font-bold text-[#111827] mb-2">Bem-vindo de volta</h2>
-            <p className="text-[#6B7280]">Entre com sua conta para continuar treinando</p>
+            <h2 className="text-3xl font-bold text-center text-[#111827] mb-2">Bem-vindo de volta</h2>
+            <p className="text-[#6B7280] text-center ">Entre com sua conta para continuar</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          {/* User type selector */}
+          <div className="mb-6">
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setUserType("seller")}
+                className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 border-[#E5E7EB] font-medium transition-all duration-200 ${
+                  userType === "seller"
+                    ? "bg-[#EBF0FA] text-[#2E63CD]"
+                    : "bg-white text-[#6B7280] hover:bg-[#F9FAFB]"
+                }`}
+              >
+                <UserIcon className="w-4 h-4" />
+                <span>Vendedor</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setUserType("admin")}
+                className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 border-[#E5E7EB] font-medium transition-all duration-200 ${
+                  userType === "admin"
+                    ? "bg-[#EBF0FA] text-[#2E63CD]"
+                    : "bg-white text-[#6B7280] hover:bg-[#F9FAFB]"
+                }`}
+              >
+                <ShieldCheckIcon className="w-4 h-4" />
+                <span>Administrador</span>
+              </button>
+            </div>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email field */}
             <FormInput
               id="email"
@@ -151,7 +177,21 @@ export default function LoginPage() {
                 <Checkbox
                   isSelected={rememberMe}
                   onValueChange={setRememberMe}
-                  className="text-sm text-[#6B7280]"
+                  radius="md"
+                  size="md"
+                  classNames={{
+                    base: "py-1",
+                    wrapper: [
+                      "border-2",
+                      "border-[#E5E7EB]",
+                      "rounded-sm",
+                      "before:hidden",
+                      "group-data-[selected=true]:bg-[#2E63CD]",
+                      "group-data-[selected=true]:border-[#2E63CD]",
+                    ],
+                    icon: "text-white",
+                    label: "text-sm text-[#6B7280] font-medium",
+                  }}
                 >
                   Lembrar de mim
                 </Checkbox>
@@ -165,10 +205,12 @@ export default function LoginPage() {
 
             <Button
               type="submit"
-              className="w-full bg-[#2E63CD] hover:bg-[#2451A8] text-white font-medium h-12 mt-6"
+              className="w-full bg-[#2E63CD] hover:bg-[#2451A8] text-white font-medium rounded-xl shadow-none transition-all duration-200 min-h-[48px] mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
               isDisabled={isLoading}
+              isLoading={isLoading}
+              spinner={<Spinner size="sm" color="white" />}
             >
-              {isLoading ? "Entrando..." : "Entrar"}
+              {userType === "admin" ? "Entrar como Administrador" : "Entrar como Vendedor"}
             </Button>
           </form>
 

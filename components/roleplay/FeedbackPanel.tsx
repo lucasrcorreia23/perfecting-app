@@ -75,6 +75,7 @@ export function FeedbackPanel({
               </div>
               <Progress
                 value={(category.score / category.maxScore) * 100}
+                maxValue={100}
                 color={
                   (category.score / category.maxScore) * 100 >= 80
                     ? "success"
@@ -82,7 +83,11 @@ export function FeedbackPanel({
                     ? "warning"
                     : "danger"
                 }
-                className="h-2"
+                radius="lg"
+                size="sm"
+                classNames={{
+                  track: "bg-[#F3F4F6]",
+                }}
               />
               <p className="text-sm text-[#6B7280]">{category.feedback}</p>
             </div>
@@ -216,9 +221,9 @@ export function FeedbackPanel({
           Tentar Novamente
         </Button>
         <Button
-          
+
           onPress={onNext}
-          className="bg-[#2E63CD] hover:bg-[#2451A8] text-white font-medium"
+          className="bg-[#2E63CD] hover:bg-[#2451A8] text-white font-medium rounded-xl shadow-md hover:shadow-lg transition-all duration-200"
         >
           Próximo Desafio
         </Button>

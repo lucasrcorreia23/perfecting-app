@@ -2,6 +2,7 @@
 
 import { Card, CardHeader, CardBody, Button, Chip, Progress, Avatar } from "@heroui/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   PlayCircleIcon,
   TrophyIcon,
@@ -13,24 +14,28 @@ import {
 import { RoleplayCard } from "@/components/roleplay";
 import { mockRoleplays, mockUserMetrics, mockLeaderboard } from "@/lib/mock-data";
 import { cn, getScoreColor } from "@/lib/utils";
+import { useAuth } from "@/contexts";
 
 export default function DashboardPage() {
+  const router = useRouter();
+  const { user } = useAuth();
   const recentRoleplays = mockRoleplays.slice(0, 3);
   const topLeaderboard = mockLeaderboard.slice(0, 5);
+  const firstName = user?.name?.split(" ")[0] || "Vendedor";
 
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Welcome section */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="heading-2">Bem-vindo de volta, João!</h1>
-          <p className="text-[#6B7280] mt-1">
+          <h1 className="heading-2">Bem-vindo de volta, {firstName}!</h1>
+          <p className="text-[#6B7280] my-2">
             Continue seu treinamento e melhore suas habilidades de vendas.
           </p>
         </div>
         <Link
           href="/roleplays"
-          className="inline-flex items-center justify-center px-4 py-2 bg-[#2E63CD] hover:bg-[#2451A8] text-white font-medium rounded-lg transition-colors"
+          className="inline-flex items-center justify-center px-4 py-2 text-lg bg-[#2E63CD] hover:bg-[#2451A8] text-white font-medium rounded-xl shadow-none transition-all duration-200 min-h-[48px] min-w-[160px]"
         >
           Iniciar Prática
         </Link>
@@ -124,6 +129,7 @@ export default function DashboardPage() {
                 key={roleplay.id}
                 roleplay={roleplay}
                 onPractice={() => window.location.href = `/roleplays/scenario/${roleplay.scenarioSlug}`}
+                onView={() => router.push(`/roleplays/${roleplay.id}/analytics`)}
               />
             ))}
           </div>

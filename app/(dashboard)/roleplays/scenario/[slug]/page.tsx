@@ -82,9 +82,12 @@ export default function ScenarioPage() {
     if (win.callInterval) {
       clearInterval(win.callInterval);
     }
+    
+    // Redirecionar para analytics após 2 segundos
     setTimeout(() => {
-      setConnectionStatus("idle");
-      setDuration(0);
+      // Usar ID mockado baseado no personagem
+      const roleplayId = selectedCharacter?.id?.split("-").pop() || "1";
+      router.push(`/roleplays/${roleplayId}/analytics`);
     }, 2000);
   };
 
@@ -213,6 +216,7 @@ export default function ScenarioPage() {
       <div className="space-y-6">
         <div className="flex items-start gap-4">
           <Avatar
+            src={selectedCharacter.avatar}
             name={selectedCharacter.name}
             className="w-16 h-16 text-xl flex-shrink-0"
           />
@@ -306,7 +310,7 @@ export default function ScenarioPage() {
                   className={cn(
                     "transition-all duration-200 w-full rounded-2xl overflow-hidden cursor-pointer",
                     selectedCharacter?.id === character.id
-                      ? "bg-[#F0F4FA] border-2 border-[#2E63CD] shadow-md"
+                      ? "bg-[#F0F4FA] border-2 border-[#bfd5ff] shadow-md"
                       : "bg-[#FAFAFA] hover:bg-white border border-[#E5E7EB] hover:border-[#C5D4ED]"
                   )}
                 >
@@ -324,6 +328,7 @@ export default function ScenarioPage() {
                     </Chip>
                     <div className="flex items-start gap-3 pr-20">
                       <Avatar
+                        src={character.avatar}
                         name={character.name}
                         className="w-12 h-12 flex-shrink-0"
                       />
@@ -455,12 +460,11 @@ export default function ScenarioPage() {
                 <div className="flex-shrink-0 p-6 border-t border-[#E5E7EB] bg-[#FAFAFA] relative z-10">
                   <div className="max-w-2xl mx-auto flex justify-center">
                     <Button
-                      
                       size="lg"
                       onPress={handleStartCall}
-                      className="px-12"
+                      className="px-12 py-7 bg-gradient-to-r from-[#2E63CD] via-[#3B82F6] to-[#60A5FA] hover:from-[#2451A8] hover:via-[#2563EB] hover:to-[#3B82F6] text-white font-semibold text-lg rounded-2xl shadow-[0_8px_30px_rgb(46,99,205,0.4)] hover:shadow-[0_12px_40px_rgb(46,99,205,0.5)] transform hover:scale-105 transition-all duration-300 border-0 animate-pulse-subtle"
                     >
-                      <PhoneIcon className="w-5 h-5" />
+                      <PhoneIcon className="w-6 h-6" />
                       Iniciar Chamada
                     </Button>
                   </div>
@@ -484,8 +488,9 @@ export default function ScenarioPage() {
                 </div>
                 <div className="relative z-10 flex flex-col items-center">
                   <div className="relative inline-block mb-6">
-                    <div className="absolute inset-0 rounded-full bg-[#2E63CD]/10 animate-ping" />
+                    <div className="absolute inset-0 rounded-full bg-[#bfd5ff]/10 animate-ping" />
                     <Avatar
+                      src={selectedCharacter.avatar}
                       name={selectedCharacter.name}
                       className="w-32 h-32 text-3xl"
                     />
@@ -496,7 +501,7 @@ export default function ScenarioPage() {
                   <p className="text-[#6B7280] mb-6">{selectedCharacter.role}</p>
                   <div className="max-w-xs w-full">
                     <div className="h-1 bg-gray-200 rounded-full overflow-hidden">
-                      <div className="h-full bg-[#2E63CD] animate-pulse w-full" />
+                      <div className="h-full bg-[#bfd5ff] animate-pulse w-full" />
                     </div>
                   </div>
                 </div>
@@ -533,16 +538,17 @@ export default function ScenarioPage() {
                     <div
                       className={cn(
                         "absolute inset-0 rounded-full transition-all duration-300",
-                        isSpeaking && "animate-pulse bg-[#2E63CD]/20 scale-110"
+                        isSpeaking && "animate-pulse bg-[#bfd5ff]/20 scale-110"
                       )}
                     />
                     <Avatar
+                      src={selectedCharacter.avatar}
                       name={selectedCharacter.name}
-                      className="w-32 h-32 text-4xl ring-4 ring-offset-4 ring-[#2E63CD]"
+                      className="w-32 h-32 text-4xl"
                     />
                     {isSpeaking && (
                       <div className="absolute -bottom-2 left-1/2 -translate-x-1/2">
-                        <SpeakerWaveIcon className="w-6 h-6 text-[#2E63CD] animate-pulse" />
+                        <SpeakerWaveIcon className="w-6 h-6 text-[#bfd5ff] animate-pulse" />
                       </div>
                     )}
                   </div>
@@ -559,7 +565,7 @@ export default function ScenarioPage() {
                       <div
                         key={i}
                         className={cn(
-                          "w-1.5 rounded-full bg-[#2E63CD] transition-all",
+                          "w-1.5 rounded-full bg-[#bfd5ff] transition-all",
                           (isSpeaking || isListening) ? "waveform-bar" : "h-2"
                         )}
                         style={{
@@ -616,7 +622,7 @@ export default function ScenarioPage() {
                       className={cn(
                         "w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-200",
                         showInfoPanel
-                          ? "bg-[#EBF0FA] text-[#2E63CD] border-2 border-[#C5D4ED]"
+                          ? "bg-[#EBF0FA] text-[#bfd5ff] border-2 border-[#C5D4ED]"
                           : "bg-[#F5F5F5] text-[#6B7280] border border-[#E5E7EB] hover:bg-[#EBEBEB]"
                       )}
                     >
@@ -643,21 +649,22 @@ export default function ScenarioPage() {
                 <div className="relative z-10 flex flex-col items-center">
                   <div className="relative inline-block mb-6">
                     <Avatar
+                      src={selectedCharacter.avatar}
                       name={selectedCharacter.name}
                       className="w-32 h-32 text-3xl opacity-50"
                     />
+                    <div className="absolute inset-0 rounded-full border-4 border-[#10B981] animate-ping" />
                   </div>
                   <h3 className="text-xl font-medium text-[#111827] mb-2">
                     Chamada encerrada
                   </h3>
-                  <p className="text-[#6B7280] mb-6">
+                  <p className="text-[#6B7280] mb-2">
                     Duracao: {formatDuration(duration)}
                   </p>
-                  <Button
-                    onPress={() => setConnectionStatus("idle")}
-                  >
-                    Ver detalhes do personagem
-                  </Button>
+                  <div className="flex items-center gap-2 text-sm text-[#6B7280]">
+                    <div className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse" />
+                    <span>Redirecionando para analytics...</span>
+                  </div>
                 </div>
               </div>
             )}
@@ -672,6 +679,7 @@ export default function ScenarioPage() {
                   isIconOnly
                   variant="ghost"
                   size="sm"
+                  className="rounded-lg hover:bg-[#F9FAFB] transition-colors"
                   onPress={() => setShowInfoPanel(false)}
                 >
                   <XMarkIconOutline className="w-5 h-5" />

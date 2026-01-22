@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Card, CardBody, Divider } from "@heroui/react";
+import { Button, Card, CardBody, Divider, Spinner } from "@heroui/react";
 import { FormInput, FormSelect, SelectItem } from "@/components/ui";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -74,7 +74,7 @@ export default function SignupPage() {
         <Card className="bg-white border border-[#E5E7EB] rounded-2xl">
           <CardBody className="p-8">
             {step === 1 ? (
-              <form onSubmit={handleNextStep} className="space-y-5">
+              <form onSubmit={handleNextStep} className="space-y-6">
                 <h2 className="text-lg font-semibold text-[#111827] text-center mb-2">
                   Informações Pessoais
                 </h2>
@@ -124,13 +124,13 @@ export default function SignupPage() {
 
                 <Button
                   type="submit"
-                  className="w-full bg-[#2E63CD] hover:bg-[#2451A8] text-white font-medium h-12 mt-6"
+                  className="w-full bg-[#2E63CD] hover:bg-[#2451A8] text-white font-medium rounded-xl shadow-none transition-all duration-200 min-h-[48px] mt-6"
                 >
                   Continuar
                 </Button>
               </form>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-5">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 <h2 className="text-lg font-semibold text-[#111827] text-center mb-2">
                   Crie sua senha
                 </h2>
@@ -178,16 +178,20 @@ export default function SignupPage() {
                 <div className="flex gap-3 mt-6">
                   <Button
                     type="button"
-                    className="flex-1 border-[#E5E7EB] text-[#1F2937] hover:bg-[#F5F5F5] font-medium h-12"
+                    variant="bordered"
+                    className="flex-1 border-2 border-[#E5E7EB] hover:border-[#D1D5DB] hover:bg-[#F9FAFB] text-[#6B7280] hover:text-[#374151] rounded-xl shadow-none transition-all duration-200 min-h-[48px]"
                     onPress={() => setStep(1)}
                   >
                     Voltar
                   </Button>
                   <Button
                     type="submit"
-                    className="flex-1 bg-[#2E63CD] hover:bg-[#2451A8] text-white font-medium h-12"
+                    className="flex-1 bg-[#2E63CD] hover:bg-[#2451A8] text-white font-medium rounded-xl shadow-none transition-all duration-200 min-h-[48px]"
                     isDisabled={isLoading || password !== confirmPassword}
                   >
+                    {isLoading && (
+                      <Spinner size="sm" color="white" className="mr-2" />
+                    )}
                     {isLoading ? "Criando..." : "Criar conta"}
                   </Button>
                 </div>

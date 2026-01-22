@@ -2,6 +2,7 @@
 
 import { Card, CardHeader, CardBody, Chip, Progress, Select, SelectItem } from "@heroui/react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   ChartBarIcon,
   TrophyIcon,
@@ -22,6 +23,7 @@ const timeRanges = [
 ];
 
 export default function MetricsPage() {
+  const router = useRouter();
   const [timeRange, setTimeRange] = useState("30d");
 
   // Calculate improvement
@@ -29,12 +31,17 @@ export default function MetricsPage() {
   const lastWeekScore = mockUserMetrics.weeklyProgress[mockUserMetrics.weeklyProgress.length - 1]?.averageScore || 0;
   const improvement = lastWeekScore - firstWeekScore;
 
+  // Redirecionar para analytics
+  const handleSessionClick = (sessionIndex: number) => {
+    router.push(`/roleplays/${sessionIndex + 1}/analytics`);
+  };
+
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="heading-2">Minhas Métricas</h1>
+          <h1 className="heading-3">Minhas Métricas</h1>
           <p className="text-[#6B7280] mt-1">
             Acompanhe seu progresso e identifique áreas de melhoria
           </p>
@@ -43,11 +50,20 @@ export default function MetricsPage() {
         <Select
           selectedKeys={new Set([timeRange])}
           onSelectionChange={(keys) => setTimeRange(Array.from(keys)[0] as string)}
-          className="w-48"
+          className="w-48 focus:outline-none"
           aria-label="Período"
+          variant="bordered"
+          radius="lg"
           classNames={{
-            trigger: "bg-white border border-[#E5E7EB] rounded-xl px-4 py-2.5 hover:border-[#C5D4ED] hover:bg-[#FAFAFA] transition-all duration-200 min-h-[44px]",
+            trigger: "bg-white border-2 border-[#E5E7EB] hover:border-[#2E63CD] data-[hover=true]:bg-[#F9FAFB] rounded-xl shadow-sm hover:shadow-md transition-all duration-200 min-h-[48px] focus:outline-none focus:ring-0",
             value: "text-[#1F2937] font-medium",
+            innerWrapper: "py-2",
+            popoverContent: "rounded-xl",
+          }}
+          popoverProps={{
+            classNames: {
+              content: "rounded-xl shadow-lg border-2 border-[#E5E7EB]",
+            },
           }}
         >
           {timeRanges.map((range) => (
@@ -143,7 +159,7 @@ export default function MetricsPage() {
       </div>
 
       {/* Main content grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Weekly progress chart */}
         <Card className="bg-white border border-[#E5E7EB] rounded-2xl">
           <CardHeader className="px-6 py-4 border-b border-[#E5E7EB]">
@@ -167,8 +183,13 @@ export default function MetricsPage() {
                   <div className="relative">
                     <Progress
                       value={week.averageScore}
+                      maxValue={100}
                       color={week.averageScore >= 80 ? "success" : week.averageScore >= 60 ? "warning" : "danger"}
-                      className="h-3"
+                      radius="lg"
+                      size="md"
+                      classNames={{
+                        track: "bg-[#F3F4F6]",
+                      }}
                     />
                   </div>
                 </div>
@@ -198,8 +219,13 @@ export default function MetricsPage() {
                     </div>
                     <Progress
                       value={percentage}
+                      maxValue={100}
                       color={percentage >= 80 ? "success" : percentage >= 60 ? "warning" : "danger"}
-                      className="h-2"
+                      radius="lg"
+                      size="sm"
+                      classNames={{
+                        track: "bg-[#F3F4F6]",
+                      }}
                     />
                     <p className="text-xs text-[#6B7280]">{category.feedback}</p>
                   </div>
@@ -285,6 +311,7 @@ export default function MetricsPage() {
             ].map((session, index) => (
               <div
                 key={index}
+                onClick={() => handleSessionClick(index)}
                 className="flex items-center justify-between p-4 hover:bg-[#F5F5F5] transition-colors cursor-pointer"
               >
                 <div>

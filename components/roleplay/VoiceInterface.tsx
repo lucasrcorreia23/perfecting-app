@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Button, Chip, Progress, Avatar } from "@heroui/react";
+import { useEffect, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { Button, Chip, Avatar } from "@heroui/react";
 import {
   MicrophoneIcon,
   PauseIcon,
@@ -10,95 +11,165 @@ import {
   SpeakerWaveIcon,
 } from "@heroicons/react/24/solid";
 import { cn, formatDuration } from "@/lib/utils";
-import type { RoleplayAgent, ConversationState } from "@/types";
+import type { RoleplayAgent, TranscriptEntry, ConversationState } from "@/types";
+import { useConversation } from "@elevenlabs/react";
+import { generateId } from "@/lib/utils";
 
 interface VoiceInterfaceProps {
   agent: RoleplayAgent;
+  roleplayId?: string;
   onEnd?: () => void;
-  onTranscriptUpdate?: (transcript: { speaker: "user" | "agent"; content: string }[]) => void;
+  onTranscriptUpdate?: (transcript: TranscriptEntry[]) => void;
+  redirectToAnalytics?: boolean;
+  useElevenLabsAgent?: boolean; // Usar ElevenLabs Agent (requer agentId configurado)
 }
 
-type ConnectionStatus = "connecting" | "connected" | "disconnected" | "error";
-
-export function VoiceInterface({ agent, onEnd, onTranscriptUpdate }: VoiceInterfaceProps) {
-  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>("connecting");
-  const [conversationState, setConversationState] = useState<ConversationState>({
-    isConnected: false,
-    isListening: false,
-    isSpeaking: false,
-    isProcessing: false,
-  });
+export function VoiceInterface({ 
+  agent, 
+  roleplayId,
+  onEnd, 
+  onTranscriptUpdate,
+  redirectToAnalytics = true,
+  useElevenLabsAgent = true, // Por padrão usa a integração oficial
+}: VoiceInterfaceProps) {
+  const router = useRouter();
   const [duration, setDuration] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
-  const [transcript, setTranscript] = useState<{ speaker: "user" | "agent"; content: string }[]>([]);
+  const [transcript, setTranscript] = useState<TranscriptEntry[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [isStarting, setIsStarting] = useState(false);
 
-  // Timer effect
+  // Hook oficial da ElevenLabs
+  const conversation = useConversation({
+    onConnect: () => {
+      console.log('Connected to ElevenLabs Agent');
+      setError(null);
+    },
+    onDisconnect: () => {
+      console.log('Disconnected from ElevenLabs Agent');
+      handleSessionEnd();
+    },
+    onMessage: (message) => {
+      console.log('Message:', message);
+      
+      // Adicionar mensagem ao transcript
+      const entry: TranscriptEntry = {
+        id: generateId(),
+        speaker: message.source === 'ai' ? 'agent' : 'user',
+        content: message.message,
+        timestamp: new Date(),
+      };
+      
+      setTranscript((prev) => {
+        const updated = [...prev, entry];
+        onTranscriptUpdate?.(updated);
+        return updated;
+      });
+    },
+    onError: (error) => {
+      console.error('Conversation error:', error);
+      setError(`Erro na conversação: ${error}`);
+    },
+  });
+
+  // Timer
   useEffect(() => {
     let interval: NodeJS.Timeout;
-    if (connectionStatus === "connected" && !isPaused) {
+    if (conversation.status === 'connected') {
       interval = setInterval(() => {
         setDuration((prev) => prev + 1);
       }, 1000);
     }
     return () => clearInterval(interval);
-  }, [connectionStatus, isPaused]);
+  }, [conversation.status]);
 
-  // Simulated connection effect
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setConnectionStatus("connected");
-      setConversationState((prev) => ({ ...prev, isConnected: true }));
-      // Simulate agent speaking first
+  // Função para buscar signed URL
+  const getSignedUrl = async (): Promise<string> => {
+    const response = await fetch("/api/get-signed-url");
+    if (!response.ok) {
+      throw new Error(`Failed to get signed URL: ${response.statusText}`);
+    }
+    const { signedUrl } = await response.json();
+    return signedUrl;
+  };
+
+  // Iniciar conversação
+  const startConversation = useCallback(async () => {
+    try {
+      setIsStarting(true);
+      setError(null);
+
+      // Request microphone permission
+      await navigator.mediaDevices.getUserMedia({ audio: true });
+
+      if (useElevenLabsAgent) {
+        // Usar ElevenLabs Agent com signed URL
+        const signedUrl = await getSignedUrl();
+        await conversation.startSession({
+          signedUrl,
+        });
+      } else {
+        // Fallback: usar agentId público se disponível
+        const agentId = process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID;
+        if (!agentId) {
+          throw new Error('Agent ID not configured');
+        }
+        
+        await conversation.startSession({
+          agentId,
+          connectionType: 'webrtc',
+        });
+      }
+    } catch (err) {
+      console.error('Failed to start conversation:', err);
+      setError(err instanceof Error ? err.message : 'Erro ao iniciar conversação');
+    } finally {
+      setIsStarting(false);
+    }
+  }, [conversation, useElevenLabsAgent]);
+
+  // Encerrar conversação
+  const stopConversation = useCallback(async () => {
+    await conversation.endSession();
+  }, [conversation]);
+
+  // Handler para fim da sessão
+  const handleSessionEnd = () => {
+    onEnd?.();
+    if (redirectToAnalytics && roleplayId) {
       setTimeout(() => {
-        setConversationState((prev) => ({ ...prev, isSpeaking: true }));
-        const agentMessage = {
-          speaker: "agent" as const,
-          content: `Olá! Eu sou ${agent.name}, ${agent.role}. Como posso ajudá-lo hoje?`,
-        };
-        setTranscript([agentMessage]);
-        onTranscriptUpdate?.([agentMessage]);
-        setTimeout(() => {
-          setConversationState((prev) => ({ ...prev, isSpeaking: false, isListening: true }));
-        }, 3000);
-      }, 500);
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, [agent, onTranscriptUpdate]);
-
-  const handleToggleMute = () => {
-    setIsMuted(!isMuted);
+        router.push(`/roleplays/${roleplayId}/analytics`);
+      }, 2000);
+    }
   };
 
-  const handleTogglePause = () => {
-    setIsPaused(!isPaused);
-  };
+  // Auto-start ao montar
+  useEffect(() => {
+    startConversation();
+    return () => {
+      if (conversation.status === 'connected') {
+        conversation.endSession();
+      }
+    };
+  }, []);
 
   const handleEndCall = () => {
-    setConnectionStatus("disconnected");
-    setConversationState({
-      isConnected: false,
-      isListening: false,
-      isSpeaking: false,
-      isProcessing: false,
-    });
-    onEnd?.();
+    stopConversation();
   };
 
   const getStatusMessage = () => {
-    if (connectionStatus === "connecting") return "Conectando...";
-    if (connectionStatus === "error") return "Erro na conexão";
-    if (conversationState.isSpeaking) return "Falando...";
-    if (conversationState.isProcessing) return "Processando...";
-    if (conversationState.isListening) return "Ouvindo...";
-    return "Conectado";
+    if (error) return "Erro na conexão";
+    if (isStarting || conversation.status === 'connecting') return "Conectando...";
+    if (conversation.status === 'disconnected') return "Desconectado";
+    if (conversation.isSpeaking) return "Falando...";
+    return "Ouvindo...";
   };
 
   const getStatusColor = (): "default" | "danger" | "warning" | "success" | "primary" => {
-    if (connectionStatus === "connecting") return "warning";
-    if (connectionStatus === "error") return "danger";
-    if (conversationState.isSpeaking) return "primary";
-    if (conversationState.isListening) return "success";
+    if (error) return "danger";
+    if (isStarting || conversation.status === 'connecting') return "warning";
+    if (conversation.status === 'disconnected') return "default";
+    if (conversation.isSpeaking) return "primary";
+    if (conversation.status === 'connected') return "success";
     return "default";
   };
 
@@ -118,14 +189,15 @@ export function VoiceInterface({ agent, onEnd, onTranscriptUpdate }: VoiceInterf
         <div
           className={cn(
             "absolute inset-0 rounded-full transition-all duration-300",
-            conversationState.isSpeaking && "animate-pulse bg-[#2E63CD]/20 scale-110"
+            conversation.isSpeaking && "animate-pulse bg-[#2E63CD]/20 scale-110"
           )}
         />
         <Avatar
+          src={agent.avatar}
           name={agent.name}
-          className="w-32 h-32 text-2xl ring-4 ring-offset-4 ring-[#2E63CD] transition-all duration-300"
+          className="w-32 h-32 text-2xl transition-all duration-300"
         />
-        {conversationState.isSpeaking && (
+        {conversation.isSpeaking && (
           <div className="absolute -bottom-2 left-1/2 -translate-x-1/2">
             <SpeakerWaveIcon className="w-6 h-6 text-[#2E63CD] animate-pulse" />
           </div>
@@ -145,7 +217,7 @@ export function VoiceInterface({ agent, onEnd, onTranscriptUpdate }: VoiceInterf
             key={i}
             className={cn(
               "w-1 rounded-full bg-[#2E63CD] transition-all",
-              conversationState.isSpeaking || conversationState.isListening
+              conversation.status === 'connected'
                 ? "waveform-bar"
                 : "h-2"
             )}
@@ -163,16 +235,12 @@ export function VoiceInterface({ agent, onEnd, onTranscriptUpdate }: VoiceInterf
 
       {/* Controls */}
       <div className="flex items-center gap-4">
-        {/* Mute button */}
+        {/* Mute button - Não disponível no SDK oficial, mas podemos simular */}
         <Button
           isIconOnly
-          className={cn(
-            "w-14 h-14 rounded-full",
-            isMuted ? "bg-red-500 text-white" : "bg-gray-200"
-          )}
-          onPress={handleToggleMute}
-          isDisabled={connectionStatus !== "connected"}
-          aria-label={isMuted ? "Ativar microfone" : "Silenciar microfone"}
+          className="w-14 h-14 rounded-full bg-gray-200"
+          isDisabled={conversation.status !== 'connected'}
+          aria-label="Microfone"
         >
           <MicrophoneIcon className="w-6 h-6" />
         </Button>
@@ -182,26 +250,23 @@ export function VoiceInterface({ agent, onEnd, onTranscriptUpdate }: VoiceInterf
           isIconOnly
           className="w-16 h-16 rounded-full bg-red-500 text-white"
           onPress={handleEndCall}
+          isDisabled={conversation.status === 'disconnected'}
           aria-label="Encerrar chamada"
         >
           <XMarkIcon className="w-8 h-8" />
         </Button>
 
-        {/* Pause button */}
+        {/* Status indicator */}
         <Button
           isIconOnly
-          className={cn(
-            "w-14 h-14 rounded-full",
-            isPaused ? "bg-yellow-500 text-white" : "bg-gray-200"
-          )}
-          onPress={handleTogglePause}
-          isDisabled={connectionStatus !== "connected"}
-          aria-label={isPaused ? "Retomar" : "Pausar"}
+          className="w-14 h-14 rounded-full bg-gray-200"
+          isDisabled={true}
+          aria-label="Status"
         >
-          {isPaused ? (
-            <PlayIcon className="w-6 h-6" />
+          {conversation.isSpeaking ? (
+            <SpeakerWaveIcon className="w-6 h-6 text-[#2E63CD]" />
           ) : (
-            <PauseIcon className="w-6 h-6" />
+            <MicrophoneIcon className="w-6 h-6 text-green-600" />
           )}
         </Button>
       </div>
@@ -225,11 +290,24 @@ export function VoiceInterface({ agent, onEnd, onTranscriptUpdate }: VoiceInterf
       )}
 
       {/* Connection progress */}
-      {connectionStatus === "connecting" && (
+      {(isStarting || conversation.status === 'connecting') && !error && (
         <div className="max-w-xs w-full">
           <div className="h-1 bg-gray-200 rounded-full overflow-hidden">
             <div className="h-full bg-[#2E63CD] animate-pulse w-full" />
           </div>
+        </div>
+      )}
+
+      {/* Error message */}
+      {error && (
+        <div className="max-w-md w-full bg-red-50 border border-red-200 rounded-lg p-4">
+          <p className="text-sm text-red-800">{error}</p>
+          <p className="text-xs text-red-600 mt-2">
+            Configure ELEVENLABS_API_KEY e NEXT_PUBLIC_ELEVENLABS_AGENT_ID no .env.local
+          </p>
+          <p className="text-xs text-gray-600 mt-1">
+            Consulte ELEVENLABS_OFFICIAL_SETUP.md para instruções
+          </p>
         </div>
       )}
     </div>

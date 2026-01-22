@@ -1,4 +1,14 @@
-import type { Roleplay, UserMetrics, LeaderboardEntry, SessionFeedback, TranscriptEntry, RoleplayScenario } from "@/types";
+import type { 
+  Roleplay, 
+  UserMetrics, 
+  LeaderboardEntry, 
+  SessionFeedback, 
+  TranscriptEntry, 
+  RoleplayScenario,
+  SessionAnalytics,
+  SessionObjections,
+  UserSessionHistory
+} from "@/types";
 
 export const mockScenarios: RoleplayScenario[] = [
   {
@@ -256,6 +266,12 @@ export const mockRoleplays: Roleplay[] = [
       "Identificar pelo menos 2 dores do prospect",
       "Agendar uma próxima reunião",
     ],
+    advanced: {
+      canAgentEndCall: false,
+      maxDuration: 10,
+      interruptionLevel: "low",
+      agentMode: "balanced",
+    },
     tags: ["prospecção", "TI", "B2B"],
     createdBy: "admin",
     createdAt: new Date("2024-01-15"),
@@ -283,6 +299,17 @@ export const mockRoleplays: Roleplay[] = [
       "Reforçar o ROI da solução",
       "Apresentar opções de pagamento",
     ],
+    objections: [
+      { id: "obj-1", content: "O preço está muito acima do orçamento disponível", category: "price" },
+      { id: "obj-2", content: "Preciso de mais tempo para avaliar outras opções", category: "timing" },
+      { id: "obj-3", content: "Não sei se conseguirei aprovação da diretoria", category: "authority" },
+    ],
+    advanced: {
+      canAgentEndCall: true,
+      maxDuration: 15,
+      interruptionLevel: "medium",
+      agentMode: "challenging",
+    },
     tags: ["objeções", "preço", "negociação"],
     createdBy: "admin",
     createdAt: new Date("2024-01-20"),
@@ -337,6 +364,17 @@ export const mockRoleplays: Roleplay[] = [
       "Usar técnica de fechamento apropriada",
       "Conseguir o compromisso ou próximo passo claro",
     ],
+    objections: [
+      { id: "obj-4", content: "Preciso apresentar para o board antes de decidir", category: "authority" },
+      { id: "obj-5", content: "O ROI ainda não está totalmente claro para mim", category: "need" },
+      { id: "obj-6", content: "Temos uma proposta similar do seu concorrente", category: "competitor" },
+    ],
+    advanced: {
+      canAgentEndCall: false,
+      maxDuration: 15,
+      interruptionLevel: "high",
+      agentMode: "challenging",
+    },
     tags: ["fechamento", "enterprise", "CFO"],
     createdBy: "admin",
     createdAt: new Date("2024-02-10"),
@@ -595,4 +633,205 @@ export const mockTranscript: TranscriptEntry[] = [
     timestamp: new Date(),
     sentiment: "positive",
   },
+  {
+    id: "t-7",
+    speaker: "agent",
+    content: "Tentativas de phishing com a equipe e um ransomware que quase pegou a gente.",
+    timestamp: new Date(),
+    sentiment: "negative",
+  },
+  {
+    id: "t-8",
+    speaker: "user",
+    content: "Entendo, isso é bem sério mesmo. E como vocês estão se protegendo agora?",
+    timestamp: new Date(),
+    sentiment: "neutral",
+  },
+  {
+    id: "t-9",
+    speaker: "agent",
+    content: "Olha, temos algumas ferramentas básicas, mas sei que precisamos de algo mais robusto. O problema é o orçamento...",
+    timestamp: new Date(),
+    sentiment: "neutral",
+  },
+  {
+    id: "t-10",
+    speaker: "user",
+    content: "Totalmente compreensível. O custo de um incidente de segurança costuma ser muito maior que o investimento em prevenção. Posso te mostrar alguns números?",
+    timestamp: new Date(),
+    sentiment: "positive",
+  },
+  {
+    id: "t-11",
+    speaker: "agent",
+    content: "Nossa solução está muito cara para o nosso orçamento atual.",
+    timestamp: new Date(),
+    sentiment: "negative",
+  },
+  {
+    id: "t-12",
+    speaker: "user",
+    content: "Entendo sua preocupação com o investimento. Vamos falar sobre o retorno que você teria...",
+    timestamp: new Date(),
+    sentiment: "positive",
+  },
+  {
+    id: "t-13",
+    speaker: "agent",
+    content: "Não sei se é o momento certo, talvez no próximo trimestre seja melhor.",
+    timestamp: new Date(),
+    sentiment: "neutral",
+  },
+  {
+    id: "t-14",
+    speaker: "user",
+    content: "Hmm, ok. Podemos conversar depois então.",
+    timestamp: new Date(),
+    sentiment: "neutral",
+  },
+  {
+    id: "t-15",
+    speaker: "agent",
+    content: "Já usamos uma solução similar da SecureNet.",
+    timestamp: new Date(),
+    sentiment: "neutral",
+  },
+  {
+    id: "t-16",
+    speaker: "user",
+    content: "Entendo. Quais são os principais desafios que você enfrenta com essa solução?",
+    timestamp: new Date(),
+    sentiment: "positive",
+  },
 ];
+
+// Analytics Mockados
+export const mockSessionAnalytics: SessionAnalytics = {
+  sessionId: "session-1",
+  talkListenRatio: {
+    userTalkTime: 180,
+    agentTalkTime: 120,
+    ratio: 60,
+  },
+  speechMetrics: {
+    wordsPerMinute: 145,
+    averagePauseDuration: 2.5,
+    fillerWordsCount: 8,
+    fillerWords: ["eh", "tipo", "hmm"],
+  },
+  engagement: {
+    longestMonologue: 45,
+    interruptionsCount: 3,
+    questionsAsked: 7,
+  },
+  recommendations: [
+    "Reduza o uso de palavras de preenchimento para soar mais confiante",
+    "Faça mais pausas estratégicas para dar espaço ao cliente pensar",
+    "Aumente o número de perguntas abertas para descobrir mais necessidades",
+  ],
+};
+
+// Objeções Mockadas
+export const mockSessionObjections: SessionObjections = {
+  sessionId: "session-1",
+  objectionsRaised: [
+    {
+      id: "obj-1",
+      type: "price",
+      content: "Nossa solução está muito cara para o nosso orçamento atual.",
+      userResponse: "Entendo sua preocupação com o investimento. Vamos falar sobre o retorno que você teria...",
+      wasHandled: true,
+      handlingTechnique: "ROI Focus",
+      feedback: "Boa abordagem focando no retorno sobre investimento. Poderia ter aprofundado mais nos números específicos e casos de ROI de clientes similares.",
+      transcriptEntryId: "t-11",
+      timestamp: new Date("2026-01-21T10:15:00"),
+    },
+    {
+      id: "obj-2",
+      type: "timing",
+      content: "Não sei se é o momento certo, talvez no próximo trimestre seja melhor.",
+      userResponse: "Hmm, ok. Podemos conversar depois então.",
+      wasHandled: false,
+      feedback: "Objeção não foi adequadamente tratada. Faltou investigar o motivo real da hesitação e criar senso de urgência. Sempre pergunte 'O que mudaria no próximo trimestre?' para entender a real objeção.",
+      transcriptEntryId: "t-13",
+      timestamp: new Date("2026-01-21T10:18:00"),
+    },
+    {
+      id: "obj-3",
+      type: "competitor",
+      content: "Já usamos uma solução similar da SecureNet.",
+      userResponse: "Entendo. Quais são os principais desafios que você enfrenta com essa solução?",
+      wasHandled: true,
+      handlingTechnique: "Discovery Questions",
+      feedback: "Excelente! Pergunta investigativa que revelou pain points com o concorrente. Continue explorando gaps entre o que têm e o que precisam.",
+      transcriptEntryId: "t-15",
+      timestamp: new Date("2026-01-21T10:22:00"),
+    },
+  ],
+  objectionsHandled: 2,
+  objectionsNotHandled: 1,
+  handlingQuality: "good",
+  suggestions: [
+    "Pratique técnicas para objeções de timing (urgência, custo de não agir)",
+    "Sempre investigue o 'porquê' antes de aceitar uma objeção passivamente",
+    "Continue usando perguntas abertas para descobrir necessidades ocultas",
+    "Prepare 3-4 casos de sucesso específicos para usar como prova social",
+  ],
+};
+
+// Histórico de Sessões Mockado
+export const mockUserSessionHistory: UserSessionHistory = {
+  userId: "user-1",
+  sessions: [
+    {
+      sessionId: "session-5",
+      roleplayTitle: "Cold Call - Tech Startup",
+      date: new Date("2026-01-20"),
+      score: 82,
+      duration: 420,
+      category: "behavioral",
+    },
+    {
+      sessionId: "session-4",
+      roleplayTitle: "Lidando com Objeção de Preço",
+      date: new Date("2026-01-18"),
+      score: 78,
+      duration: 540,
+      category: "objection",
+    },
+    {
+      sessionId: "session-3",
+      roleplayTitle: "Demonstração de Produto SaaS",
+      date: new Date("2026-01-15"),
+      score: 85,
+      duration: 720,
+      category: "technical",
+    },
+    {
+      sessionId: "session-2",
+      roleplayTitle: "Primeira Abordagem: Decisor de TI",
+      date: new Date("2026-01-12"),
+      score: 72,
+      duration: 360,
+      category: "behavioral",
+    },
+    {
+      sessionId: "session-1",
+      roleplayTitle: "Fechamento: Proposta Final",
+      date: new Date("2026-01-10"),
+      score: 76,
+      duration: 480,
+      category: "closing",
+    },
+  ],
+  overallStats: {
+    totalSessions: 47,
+    averageScore: 78,
+    improvement: 15,
+    bestCategory: "Técnico",
+    weakestCategory: "Objeções",
+  },
+};
+
+// Áudio Mockado (URL de exemplo)
+export const mockAudioUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3";

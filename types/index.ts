@@ -59,6 +59,8 @@ export interface Roleplay {
   scenarioSlug: string;
   agent: RoleplayAgent;
   objectives: string[];
+  objections?: ObjectionItem[];
+  advanced?: AdvancedSettings;
   tags: string[];
   createdBy: string;
   createdAt: Date;
@@ -170,6 +172,115 @@ export interface LeaderboardEntry {
   score: number;
   sessionsCompleted: number;
   improvement: number;
+}
+
+// Analytics Types
+export interface SessionAnalytics {
+  sessionId: string;
+  talkListenRatio: {
+    userTalkTime: number; // segundos
+    agentTalkTime: number;
+    ratio: number; // percentual do usuário
+  };
+  speechMetrics: {
+    wordsPerMinute: number;
+    averagePauseDuration: number;
+    fillerWordsCount: number;
+    fillerWords: string[]; // ["eh", "hmm", "tipo"]
+  };
+  engagement: {
+    longestMonologue: number; // segundos
+    interruptionsCount: number;
+    questionsAsked: number;
+  };
+  recommendations: string[];
+}
+
+// Objections Types
+export interface SessionObjections {
+  sessionId: string;
+  objectionsRaised: ObjectionEntry[];
+  objectionsHandled: number;
+  objectionsNotHandled: number;
+  handlingQuality: "poor" | "fair" | "good" | "excellent";
+  suggestions: string[];
+}
+
+export interface ObjectionEntry {
+  id: string;
+  type: "price" | "timing" | "authority" | "need" | "competitor" | "trust" | "other";
+  content: string; // O que o agente disse
+  userResponse: string; // Como o usuário respondeu
+  wasHandled: boolean;
+  handlingTechnique?: string; // Ex: "Feel, Felt, Found", "Reframe", "Question"
+  feedback: string; // Feedback sobre como foi tratada
+  transcriptEntryId: string; // Referência ao transcript
+  timestamp: Date;
+}
+
+// User Session History Types
+export interface UserSessionHistory {
+  userId: string;
+  sessions: SessionHistoryEntry[];
+  overallStats: {
+    totalSessions: number;
+    averageScore: number;
+    improvement: number; // percentual
+    bestCategory: string;
+    weakestCategory: string;
+  };
+}
+
+export interface SessionHistoryEntry {
+  sessionId: string;
+  roleplayTitle: string;
+  date: Date;
+  score: number;
+  duration: number;
+  category: RoleplayCategory;
+}
+
+// Roleplay Creation Types
+export interface RoleplayFormData {
+  // Step 1: Descrição do Roleplay
+  name: string;
+  description: string; // Rich text description
+  
+  // Step 2: Contexto
+  scenarioContext: string;
+  
+  // Step 3: Persona
+  buyerPersona: BuyerPersona;
+  
+  // Step 4: Rubrica (Opcional) - Objetivos
+  objectives?: string[]; // Lista de objetivos/metas
+  
+  // Step 5: Objeções (Opcional)
+  objections?: ObjectionItem[];
+  
+  // Step 6: Avançado (Opcional)
+  advanced?: AdvancedSettings;
+}
+
+export interface BuyerPersona {
+  jobTitle: string;
+  seniority: "junior" | "mid" | "senior" | "c-level";
+  profile: "skeptical" | "neutral" | "receptive" | "enthusiastic";
+  difficulty: "beginner" | "intermediate" | "advanced";
+  personality: string; // Descrição do comportamento
+}
+
+export interface ObjectionItem {
+  id: string;
+  content: string;
+  category?: "price" | "timing" | "authority" | "need" | "competitor" | "trust" | "other";
+}
+
+export interface AdvancedSettings {
+  canAgentEndCall: boolean;
+  maxDuration: number; // minutos
+  interruptionLevel: "low" | "medium" | "high";
+  agentMode: "challenging" | "balanced" | "collaborative";
 }
 
 // API Response Types

@@ -1,3 +1,8 @@
 export { RoleplayCard } from "./RoleplayCard";
 export { VoiceInterface } from "./VoiceInterface";
 export { FeedbackPanel } from "./FeedbackPanel";
+export { AudioPlayer } from "./AudioPlayer";
+export { TranscriptViewer } from "./TranscriptViewer";
+export { StepIndicator } from "./StepIndicator";
+export { ReviewStep } from "./ReviewStep";
+export { EditableList } from "./EditableList";

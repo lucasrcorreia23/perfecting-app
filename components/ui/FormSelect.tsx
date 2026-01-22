@@ -46,6 +46,34 @@ export function FormSelect({
         isInvalid={isInvalid}
         errorMessage={errorMessage}
         aria-label={label || placeholder}
+        classNames={{
+          trigger: [
+            "min-h-[48px]",
+            "bg-white",
+            "border-2",
+            "border-[#E5E7EB]",
+            "hover:border-[#D1D5DB]",
+            "data-[focus=true]:border-[#2E63CD]",
+            "data-[focus=true]:bg-[#EBF0FA]",
+            "data-[open=true]:border-[#2E63CD]",
+            "data-[open=true]:bg-[#EBF0FA]",
+            "rounded-xl",
+            "shadow-none",
+            "transition-all",
+            "duration-200",
+          ],
+          value: "text-[#1F2937]",
+          popoverContent: "rounded-xl border border-[#E5E7EB] shadow-none overflow-hidden p-1",
+          listbox: "p-0 rounded-xl",
+          base: "rounded-xl",
+          ...props.classNames,
+        }}
+        popoverProps={{
+          classNames: {
+            content: "p-1 border border-[#E5E7EB] rounded-xl overflow-hidden shadow-none",
+            base: "rounded-xl border border-[#E5E7EB] shadow-none",
+          },
+        }}
         {...props}
       >
         {children}

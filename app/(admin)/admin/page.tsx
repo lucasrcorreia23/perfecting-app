@@ -39,7 +39,7 @@ export default function AdminDashboardPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="heading-2">Dashboard Administrativo</h1>
+          <h1 className="heading-3">Dashboard Administrativo</h1>
           <p className="text-[#6B7280] mt-1">
             Gerencie sua equipe e acompanhe o progresso dos treinamentos
           </p>
@@ -49,24 +49,33 @@ export default function AdminDashboardPage() {
           <Select
             selectedKeys={new Set([timeRange])}
             onSelectionChange={(keys) => setTimeRange(Array.from(keys)[0] as string)}
-            className="w-44"
+            className="w-44 focus:outline-none"
             aria-label="Período"
+            variant="bordered"
+            radius="lg"
             classNames={{
-              trigger: "bg-white border border-[#E5E7EB] rounded-xl px-4 py-2.5 hover:border-[#C5D4ED] hover:bg-[#FAFAFA] transition-all duration-200 min-h-[44px]",
+              trigger: "bg-white border-2 border-[#E5E7EB] hover:border-[#D1D5DB] data-[focus=true]:border-[#2E63CD] data-[focus=true]:bg-[#EBF0FA] data-[open=true]:border-[#2E63CD] data-[open=true]:bg-[#EBF0FA] rounded-xl shadow-none transition-all duration-200 min-h-[48px] focus:outline-none focus:ring-0",
               value: "text-[#1F2937] font-medium",
+              innerWrapper: "py-2",
+              popoverContent: "rounded-xl shadow-none",
+            }}
+            popoverProps={{
+              classNames: {
+                content: "rounded-xl shadow-none border border-[#E5E7EB]",
+              },
             }}
           >
             {timeRanges.map((range) => (
               <SelectItem key={range.value}>{range.label}</SelectItem>
             ))}
           </Select>
-          <Button
-            
-            className="bg-[#2E63CD] hover:bg-[#2451A8]"
+          <Link
+            href="/roleplays/create"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-[#2E63CD] hover:bg-[#2451A8] text-white font-medium rounded-xl shadow-none transition-all duration-200 min-h-[48px]"
           >
             <PlusIcon className="w-5 h-5" />
-            Novo Role-play
-          </Button>
+            Criar Role-play
+          </Link>
         </div>
       </div>
 
@@ -218,8 +227,14 @@ export default function AdminDashboardPage() {
                         <div className="flex items-center gap-2">
                           <Progress
                             value={user.score}
+                            maxValue={100}
                             color={user.score >= 80 ? "success" : user.score >= 60 ? "warning" : "danger"}
-                            className="max-w-24 h-2"
+                            radius="lg"
+                            size="sm"
+                            className="max-w-24"
+                            classNames={{
+                              track: "bg-[#F3F4F6]",
+                            }}
                           />
                           <Chip
                             size="sm"

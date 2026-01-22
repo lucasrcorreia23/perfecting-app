@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts";
 import {
   Dropdown,
   DropdownTrigger,
@@ -27,6 +28,8 @@ import {
   Cog6ToothIcon,
   ArrowRightOnRectangleIcon,
   UserIcon,
+  BookOpenIcon,
+  PlusCircleIcon,
 } from "@heroicons/react/24/outline";
 import {
   HomeIcon as HomeIconSolid,
@@ -56,38 +59,45 @@ interface SidebarProps {
   };
 }
 
-const roleplayScenarios = [
-  { label: "Venda B2B", href: "/roleplays/scenario/venda-b2b", icon: BriefcaseIcon },
-  { label: "Suporte", href: "/roleplays/scenario/atendimento", icon: ChatBubbleLeftRightIcon },
-  { label: "Negociação", href: "/roleplays/scenario/negociacao", icon: ScaleIcon },
-  { label: "Cold Call", href: "/roleplays/scenario/cold-call", icon: PhoneIcon },
-  { label: "Fechamento", href: "/roleplays/scenario/fechamento", icon: CheckCircleIcon },
-];
+const getNavigationItems = (variant: "seller" | "admin"): SidebarItem[] => {
+  const roleplaySubmenu = [
+    { label: "Biblioteca", href: "/roleplays", icon: BookOpenIcon },
+    ...(variant === "admin" ? [{ label: "Criar Roleplay", href: "/roleplays/create", icon: PlusCircleIcon }] : []),
+    { label: "Venda B2B", href: "/roleplays/scenario/venda-b2b", icon: BriefcaseIcon },
+    { label: "Suporte", href: "/roleplays/scenario/atendimento", icon: ChatBubbleLeftRightIcon },
+    { label: "Negociação", href: "/roleplays/scenario/negociacao", icon: ScaleIcon },
+    { label: "Cold Call", href: "/roleplays/scenario/cold-call", icon: PhoneIcon },
+    { label: "Fechamento", href: "/roleplays/scenario/fechamento", icon: CheckCircleIcon },
+  ];
 
-const sellerItems: SidebarItem[] = [
-  { label: "Home", href: "/dashboard", icon: HomeIcon, iconSolid: HomeIconSolid },
-  {
-    label: "Role-plays",
-    href: "/roleplays",
-    icon: PlayCircleIcon,
-    iconSolid: PlayCircleIconSolid,
-    hasSubmenu: true,
-    submenu: roleplayScenarios,
-  },
-  { label: "Métricas", href: "/metrics", icon: ChartBarIcon, iconSolid: ChartBarIconSolid },
-  { label: "Ranking", href: "/ranking", icon: TrophyIcon, iconSolid: TrophyIconSolid },
-];
+  const baseItems: SidebarItem[] = [
+    { label: "Dashboard", href: variant === "admin" ? "/admin" : "/dashboard", icon: HomeIcon, iconSolid: HomeIconSolid },
+    {
+      label: "Role-plays",
+      href: "/roleplays",
+      icon: PlayCircleIcon,
+      iconSolid: PlayCircleIconSolid,
+      hasSubmenu: true,
+      submenu: roleplaySubmenu,
+    },
+    { label: "Métricas", href: "/metrics", icon: ChartBarIcon, iconSolid: ChartBarIconSolid },
+    { label: "Ranking", href: "/ranking", icon: TrophyIcon, iconSolid: TrophyIconSolid },
+  ];
 
-const adminItems: SidebarItem[] = [
-  { label: "Dashboard", href: "/admin", icon: HomeIcon, iconSolid: HomeIconSolid },
-  { label: "Usuários", href: "/users", icon: UsersIcon, iconSolid: UsersIconSolid },
-];
+  // Admin tem item adicional de usuários
+  if (variant === "admin") {
+    baseItems.push({ label: "Usuários", href: "/users", icon: UsersIcon, iconSolid: UsersIconSolid });
+  }
+
+  return baseItems;
+};
 
 export function Sidebar({ variant = "seller", user }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
   const pathname = usePathname();
-  const items = variant === "admin" ? adminItems : sellerItems;
+  const { logout } = useAuth();
+  const items = getNavigationItems(variant);
 
   const toggleSubmenu = (label: string) => {
     setExpandedMenus((prev) =>
@@ -163,7 +173,11 @@ export function Sidebar({ variant = "seller", user }: SidebarProps) {
                   {!isCollapsed && isExpanded && (
                     <div className="ml-4 mt-1 space-y-1 pl-3">
                       {item.submenu.map((subItem) => {
-                        const isSubActive = pathname.startsWith(subItem.href);
+                        // Para "Biblioteca" (/roleplays), só marca como ativo se for exatamente essa rota
+                        // Para outros itens, usa startsWith normalmente
+                        const isSubActive = subItem.href === "/roleplays" 
+                          ? pathname === "/roleplays"
+                          : pathname.startsWith(subItem.href);
                         const SubIcon = subItem.icon;
                         return (
                           <Link
@@ -221,41 +235,48 @@ export function Sidebar({ variant = "seller", user }: SidebarProps) {
           {isCollapsed ? (
             <Dropdown >
               <DropdownTrigger>
-                <div className="p-2 rounded-xl hover:bg-[#F5F5F5] transition-colors cursor-pointer">
+                <button className="p-2 rounded-xl hover:bg-[#F5F5F5] transition-colors">
                   <Avatar
                     className="transition-transform"
                     name={user?.name || "Usuário"}
                     size="sm"
                   />
-                </div>
+                </button>
               </DropdownTrigger>
-              <DropdownMenu aria-label="Menu do usuário" >
-                <DropdownItem key="profile" className="h-14 gap-2">
+              <DropdownMenu 
+                aria-label="Menu do usuário"
+                classNames={{
+                  base: "rounded-xl shadow-lg border-2 border-[#E5E7EB] bg-white p-2 min-w-[240px]",
+                  list: "gap-1",
+                }}
+              >
+                <DropdownItem key="profile" className="h-14 gap-2 rounded-lg hover:bg-transparent cursor-default">
                   <p className="font-semibold text-[#111827]">{user?.name || "Usuário"}</p>
                   <p className="text-sm text-[#6B7280]">{user?.email || "email@exemplo.com"}</p>
                 </DropdownItem>
                 <DropdownItem
                   key="my-profile"
-                  
+                  className="rounded-lg hover:bg-[#F9FAFB] transition-colors"
                 >
                   Meu Perfil
                 </DropdownItem>
                 <DropdownItem
                   key="metrics"
-                  
+                  className="rounded-lg hover:bg-[#F9FAFB] transition-colors"
                 >
                   Minhas Métricas
                 </DropdownItem>
                 <DropdownItem
                   key="settings"
-                  
+                  className="rounded-lg hover:bg-[#F9FAFB] transition-colors"
                 >
                   Configurações
                 </DropdownItem>
                 <DropdownItem
                   key="logout"
-                  
-                  
+                  className="text-danger rounded-lg"
+                  color="danger"
+                  onPress={logout}
                 >
                   Sair
                 </DropdownItem>
@@ -264,42 +285,49 @@ export function Sidebar({ variant = "seller", user }: SidebarProps) {
           ) : (
             <Dropdown >
               <DropdownTrigger>
-                <div className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-[#F5F5F5] transition-colors cursor-pointer">
+                <button className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-[#F5F5F5] transition-colors text-left">
                   <Avatar
                     className="transition-transform"
                     name={user?.name || "Usuário"}
                     size="sm"
                   />
-                  <div className="flex-1 text-left min-w-0">
+                  <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-[#111827] truncate">{user?.name || "Usuário"}</p>
                     <p className="text-xs text-[#6B7280] truncate">{user?.email || "email@exemplo.com"}</p>
                   </div>
                   <ChevronDownIcon className="w-4 h-4 text-[#6B7280] flex-shrink-0" />
-                </div>
+                </button>
               </DropdownTrigger>
-              <DropdownMenu aria-label="Menu do usuário" >
+              <DropdownMenu 
+                aria-label="Menu do usuário"
+                classNames={{
+                  base: "rounded-xl shadow-lg border-2 border-[#E5E7EB] bg-white p-2 min-w-[240px]",
+                  list: "gap-1",
+                }}
+              >
                 <DropdownItem
                   key="my-profile"
-                  
+                  className="rounded-lg hover:bg-[#F9FAFB] transition-colors"
                 >
                   Meu Perfil
                 </DropdownItem>
                 <DropdownItem
                   key="metrics"
-                  
+                  className="rounded-lg hover:bg-[#F9FAFB] transition-colors"
                 >
                   Minhas Métricas
                 </DropdownItem>
                 <DropdownItem
                   key="settings"
-                  
+                  className="rounded-lg hover:bg-[#F9FAFB] transition-colors"
                 >
                   Configurações
                 </DropdownItem>
                 <DropdownItem
                   key="logout"
-                  
-                  
+                  className="text-danger rounded-lg"
+                  color="danger"
+                  onPress={logout}
                 >
                   Sair
                 </DropdownItem>

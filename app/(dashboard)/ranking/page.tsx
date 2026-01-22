@@ -106,7 +106,7 @@ export default function RankingPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="heading-2">Ranking</h1>
+          <h1 className="heading-3">Ranking</h1>
           <p className="text-[#6B7280] mt-1">
             Veja como você está em comparação com seus colegas
           </p>
@@ -115,12 +115,21 @@ export default function RankingPage() {
         <Select
           selectedKeys={new Set([timeRange])}
           onSelectionChange={(keys) => setTimeRange(Array.from(keys)[0] as string)}
-          className="w-48"
+          className="w-48 focus:outline-none"
           placeholder="Selecione o período"
           aria-label="Período"
+          variant="bordered"
+          radius="lg"
           classNames={{
-            trigger: "bg-white border border-[#E5E7EB] rounded-xl px-4 py-2.5 hover:border-[#C5D4ED] hover:bg-[#FAFAFA] transition-all duration-200 min-h-[44px]",
+            trigger: "bg-white border-2 border-[#E5E7EB] hover:border-[#2E63CD] data-[hover=true]:bg-[#F9FAFB] rounded-xl shadow-sm hover:shadow-md transition-all duration-200 min-h-[48px] focus:outline-none focus:ring-0",
             value: "text-[#1F2937] font-medium",
+            innerWrapper: "py-2",
+            popoverContent: "rounded-xl",
+          }}
+          popoverProps={{
+            classNames: {
+              content: "rounded-xl shadow-lg border-2 border-[#E5E7EB]",
+            },
           }}
         >
           {timeRanges.map((range) => (
@@ -164,7 +173,7 @@ export default function RankingPage() {
               <Avatar
                 src={extendedLeaderboard[0].userAvatar}
                 name={extendedLeaderboard[0].userName}
-                className="w-24 h-24 mx-auto ring-4 ring-[#FCD34D]"
+                className="w-24 h-24 mx-auto"
               />
               <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-gradient-to-br from-[#FCD34D] to-[#F59E0B] text-white flex items-center justify-center font-bold text-lg">
                 1

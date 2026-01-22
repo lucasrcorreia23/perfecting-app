@@ -11,7 +11,20 @@ const config = {
     extend: {},
   },
   darkMode: "class",
-  plugins: [heroui()],
+  plugins: [
+    heroui({
+      themes: {
+        light: {
+          colors: {
+            primary: {
+              DEFAULT: "#2E63CD",
+              foreground: "#FFFFFF",
+            },
+          },
+        },
+      },
+    }),
+  ],
 };
 
 export default config;

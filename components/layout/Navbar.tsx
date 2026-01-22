@@ -3,6 +3,7 @@
 import { Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Navbar as HeroNavbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, Badge, Avatar } from "@heroui/react";
 import { useState } from "react";
 import Link from "next/link";
+import { useAuth } from "@/contexts";
 import {
   BellIcon,
   Cog6ToothIcon,
@@ -22,6 +23,7 @@ interface NavbarProps {
 
 export function Navbar({ user }: NavbarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { logout } = useAuth();
 
   return (
     <HeroNavbar
@@ -74,7 +76,7 @@ export function Navbar({ user }: NavbarProps) {
               <Button 
                 isIconOnly 
                 variant="ghost" 
-                className="text-[#6B7280]"
+                className="text-[#6B7280] rounded-lg hover:bg-[#F9FAFB] transition-colors"
                 aria-label="Notificações"
               >
                 <Badge content="3" color="danger">
@@ -82,22 +84,29 @@ export function Navbar({ user }: NavbarProps) {
                 </Badge>
               </Button>
             </DropdownTrigger>
-            <DropdownMenu aria-label="Notificações" className="w-80">
+            <DropdownMenu 
+              aria-label="Notificações" 
+              className="w-80"
+              classNames={{
+                base: "rounded-xl shadow-lg border-2 border-[#E5E7EB] bg-white p-2",
+                list: "gap-1",
+              }}
+            >
               <DropdownItem
                 key="notification-1"
-                
+                className="rounded-lg hover:bg-[#F9FAFB] transition-colors"
               >
                 Nova conquista desbloqueada
               </DropdownItem>
               <DropdownItem
                 key="notification-2"
-                
+                className="rounded-lg hover:bg-[#F9FAFB] transition-colors"
               >
                 Novo conteúdo disponível
               </DropdownItem>
               <DropdownItem
                 key="notification-3"
-                
+                className="rounded-lg hover:bg-[#F9FAFB] transition-colors"
               >
                 Progresso semanal
               </DropdownItem>
@@ -116,33 +125,40 @@ export function Navbar({ user }: NavbarProps) {
                 size="sm"
               />
             </DropdownTrigger>
-            <DropdownMenu aria-label="Menu do usuário" >
-              <DropdownItem key="profile" className="h-14 gap-2">
+            <DropdownMenu 
+              aria-label="Menu do usuário"
+              classNames={{
+                base: "rounded-xl shadow-lg border-2 border-[#E5E7EB] bg-white p-2 min-w-[240px]",
+                list: "gap-1",
+              }}
+            >
+              <DropdownItem key="profile" className="h-14 gap-2 rounded-lg hover:bg-transparent cursor-default">
                 <p className="font-semibold text-[#111827]">{user?.name || "Usuário"}</p>
                 <p className="text-sm text-[#6B7280]">{user?.email || "email@exemplo.com"}</p>
               </DropdownItem>
               <DropdownItem
                 key="my-profile"
-                
+                className="rounded-lg hover:bg-[#F9FAFB] transition-colors"
               >
                 Meu Perfil
               </DropdownItem>
               <DropdownItem
                 key="metrics"
-                
+                className="rounded-lg hover:bg-[#F9FAFB] transition-colors"
               >
                 Minhas Métricas
               </DropdownItem>
               <DropdownItem
                 key="settings"
-                
+                className="rounded-lg hover:bg-[#F9FAFB] transition-colors"
               >
                 Configurações
               </DropdownItem>
               <DropdownItem
                 key="logout"
-                
-                
+                className="text-danger rounded-lg"
+                color="danger"
+                onPress={logout}
               >
                 Sair
               </DropdownItem>

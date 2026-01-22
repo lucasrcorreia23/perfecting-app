@@ -79,15 +79,14 @@ export default function UsersPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="heading-2">Gerenciar Usuários</h1>
+          <h1 className="heading-3">Gerenciar Usuários</h1>
           <p className="text-[#6B7280] mt-1">
             Adicione, edite e gerencie os membros da sua equipe
           </p>
         </div>
 
         <Button
-          
-          className="bg-[#2E63CD] hover:bg-[#2451A8]"
+          className="bg-[#2E63CD] hover:bg-[#2451A8] text-white font-medium rounded-xl shadow-md hover:shadow-lg transition-all duration-200"
           onPress={() => setIsAddModalOpen(true)}
         >
           <PlusIcon className="w-5 h-5" />
@@ -112,11 +111,20 @@ export default function UsersPage() {
                 placeholder="Grupo"
                 selectedKeys={new Set([selectedGroup])}
                 onSelectionChange={(keys) => setSelectedGroup(Array.from(keys)[0] as string)}
-                className="w-44"
+                className="w-44 focus:outline-none"
                 aria-label="Grupo"
+                variant="bordered"
+                radius="lg"
                 classNames={{
-                  trigger: "bg-white border border-[#E5E7EB] rounded-xl px-4 py-2.5 hover:border-[#C5D4ED] hover:bg-[#FAFAFA] transition-all duration-200 min-h-[44px]",
+                  trigger: "bg-white border-2 border-[#E5E7EB] hover:border-[#2E63CD] data-[hover=true]:bg-[#F9FAFB] rounded-xl shadow-sm hover:shadow-md transition-all duration-200 min-h-[48px] focus:outline-none focus:ring-0",
                   value: "text-[#1F2937] font-medium",
+                  innerWrapper: "py-2",
+                  popoverContent: "rounded-xl",
+                }}
+                popoverProps={{
+                  classNames: {
+                    content: "rounded-xl shadow-lg border-2 border-[#E5E7EB]",
+                  },
                 }}
               >
                 {groups.map((group) => (
@@ -128,11 +136,20 @@ export default function UsersPage() {
                 placeholder="Status"
                 selectedKeys={new Set([selectedStatus])}
                 onSelectionChange={(keys) => setSelectedStatus(Array.from(keys)[0] as string)}
-                className="w-36"
+                className="w-36 focus:outline-none"
                 aria-label="Status"
+                variant="bordered"
+                radius="lg"
                 classNames={{
-                  trigger: "bg-white border border-[#E5E7EB] rounded-xl px-4 py-2.5 hover:border-[#C5D4ED] hover:bg-[#FAFAFA] transition-all duration-200 min-h-[44px]",
+                  trigger: "bg-white border-2 border-[#E5E7EB] hover:border-[#2E63CD] data-[hover=true]:bg-[#F9FAFB] rounded-xl shadow-sm hover:shadow-md transition-all duration-200 min-h-[48px] focus:outline-none focus:ring-0",
                   value: "text-[#1F2937] font-medium",
+                  innerWrapper: "py-2",
+                  popoverContent: "rounded-xl",
+                }}
+                popoverProps={{
+                  classNames: {
+                    content: "rounded-xl shadow-lg border-2 border-[#E5E7EB]",
+                  },
                 }}
               >
                 {statusOptions.map((status) => (
@@ -218,7 +235,7 @@ export default function UsersPage() {
                   <TableCell>
                     <Dropdown>
                       <DropdownTrigger>
-                        <Button isIconOnly variant="ghost" size="sm">
+                        <Button isIconOnly variant="ghost" size="sm" className="rounded-lg hover:bg-[#F9FAFB] transition-colors">
                           <EllipsisVerticalIcon className="w-5 h-5 text-[#6B7280]" />
                         </Button>
                       </DropdownTrigger>
@@ -252,36 +269,62 @@ export default function UsersPage() {
       {/* Add User Modal */}
       <Modal
         isOpen={isAddModalOpen}
-        
+        onClose={() => setIsAddModalOpen(false)}
+        backdrop="opaque"
+        classNames={{
+          backdrop: "bg-[#111827]/50 backdrop-blur-sm",
+          wrapper: "overflow-hidden",
+        }}
       >
-        <ModalContent>
-          <ModalHeader className="border-b border-[#E5E7EB]">
-            Adicionar Novo Usuário
+        <ModalContent className="bg-white border-2 border-[#E5E7EB] rounded-2xl shadow-xl">
+          <ModalHeader className="border-b border-[#E5E7EB] px-6 py-4">
+            <h3 className="text-xl font-semibold text-[#111827]">Adicionar Novo Usuário</h3>
           </ModalHeader>
-          <ModalBody className="py-6">
-            <div className="space-y-4">
+          <ModalBody className="py-6 px-6">
+            <div className="space-y-5">
               <div>
-                <label className="block text-sm font-medium mb-2">Nome completo</label>
+                <label className="block text-sm font-medium text-[#1F2937] mb-2">Nome completo</label>
                 <Input
                   placeholder="Nome do usuário"
+                  variant="bordered"
+                  radius="lg"
+                  classNames={{
+                    input: "text-[#1F2937]",
+                    inputWrapper: "border-2 border-[#E5E7EB] hover:border-[#2E63CD] rounded-xl min-h-[48px]",
+                  }}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">E-mail</label>
+                <label className="block text-sm font-medium text-[#1F2937] mb-2">E-mail</label>
                 <Input
                   placeholder="email@empresa.com"
                   type="email"
+                  variant="bordered"
+                  radius="lg"
+                  classNames={{
+                    input: "text-[#1F2937]",
+                    inputWrapper: "border-2 border-[#E5E7EB] hover:border-[#2E63CD] rounded-xl min-h-[48px]",
+                  }}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Função</label>
+                <label className="block text-sm font-medium text-[#1F2937] mb-2">Função</label>
                 <Select
                   placeholder="Selecione a função"
-                  className="w-full"
+                  className="w-full focus:outline-none"
                   aria-label="Função"
+                  variant="bordered"
+                  radius="lg"
                   classNames={{
-                    trigger: "bg-white border border-[#E5E7EB] rounded-xl px-4 py-2.5 hover:border-[#C5D4ED] hover:bg-[#FAFAFA] transition-all duration-200 min-h-[44px]",
-                    value: "text-[#1F2937] font-medium",
+                    trigger: "bg-white border-2 border-[#E5E7EB] hover:border-[#2E63CD] data-[hover=true]:bg-[#F9FAFB] rounded-xl transition-all duration-200 min-h-[48px] focus:outline-none focus:ring-0",
+                    value: "text-[#1F2937]",
+                    innerWrapper: "py-2",
+                    popoverContent: "rounded-xl",
+                  }}
+                  popoverProps={{
+                    classNames: {
+                      content: "rounded-xl shadow-lg border-2 border-[#E5E7EB] bg-white",
+                    },
                   }}
                 >
                   <SelectItem key="seller">Vendedor</SelectItem>
@@ -289,14 +332,23 @@ export default function UsersPage() {
                 </Select>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Grupo</label>
+                <label className="block text-sm font-medium text-[#1F2937] mb-2">Grupo</label>
                 <Select
                   placeholder="Selecione o grupo"
-                  className="w-full"
+                  className="w-full focus:outline-none"
                   aria-label="Grupo"
+                  variant="bordered"
+                  radius="lg"
                   classNames={{
-                    trigger: "bg-white border border-[#E5E7EB] rounded-xl px-4 py-2.5 hover:border-[#C5D4ED] hover:bg-[#FAFAFA] transition-all duration-200 min-h-[44px]",
-                    value: "text-[#1F2937] font-medium",
+                    trigger: "bg-white border-2 border-[#E5E7EB] hover:border-[#2E63CD] data-[hover=true]:bg-[#F9FAFB] rounded-xl transition-all duration-200 min-h-[48px] focus:outline-none focus:ring-0",
+                    value: "text-[#1F2937]",
+                    innerWrapper: "py-2",
+                    popoverContent: "rounded-xl",
+                  }}
+                  popoverProps={{
+                    classNames: {
+                      content: "rounded-xl shadow-lg border-2 border-[#E5E7EB] bg-white",
+                    },
                   }}
                 >
                   <SelectItem key="comercial">Equipe Comercial</SelectItem>
@@ -306,16 +358,16 @@ export default function UsersPage() {
               </div>
             </div>
           </ModalBody>
-          <ModalFooter className="border-t border-[#E5E7EB]">
+          <ModalFooter className="border-t border-[#E5E7EB] px-6 py-4">
             <Button
               variant="ghost"
+              className="rounded-lg hover:bg-[#F9FAFB] transition-colors text-[#6B7280] font-medium"
               onPress={() => setIsAddModalOpen(false)}
             >
               Cancelar
             </Button>
             <Button
-              
-              className="bg-[#2E63CD] hover:bg-[#2451A8]"
+              className="bg-[#2E63CD] hover:bg-[#2451A8] text-white font-medium rounded-xl shadow-md hover:shadow-lg transition-all duration-200 min-h-[48px]"
               onPress={() => setIsAddModalOpen(false)}
             >
               Adicionar Usuário

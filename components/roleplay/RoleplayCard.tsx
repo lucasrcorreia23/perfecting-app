@@ -10,7 +10,9 @@ interface RoleplayCardProps {
   onPractice?: () => void;
   onView?: () => void;
   onEdit?: () => void;
-  showActions?: boolean;
+  onDuplicate?: () => void;
+  onDelete?: () => void;
+  showAdminActions?: boolean;
 }
 
 export function RoleplayCard({
@@ -18,10 +20,23 @@ export function RoleplayCard({
   onPractice,
   onView,
   onEdit,
-  showActions = true,
+  onDuplicate,
+  onDelete,
+  showAdminActions = false,
 }: RoleplayCardProps) {
   const categoryColor = getCategoryColor(roleplay.category);
   const categoryLabel = getCategoryLabel(roleplay.category);
+
+  const menuItems = [
+    { key: "view", label: "Ver Analytics", action: onView },
+    ...(showAdminActions
+      ? [
+          { key: "edit", label: "Editar", action: onEdit, className: "rounded-lg hover:bg-[#F9FAFB] transition-colors" },
+          { key: "duplicate", label: "Duplicar", action: onDuplicate, className: "rounded-lg hover:bg-[#F9FAFB] transition-colors" },
+          { key: "delete", label: "Deletar", action: onDelete, className: "text-danger rounded-lg", color: "danger" as const },
+        ]
+      : []),
+  ];
 
   return (
     <Card className="bg-white border border-[#E5E7EB] rounded-2xl transition-all duration-200 card-hover overflow-hidden">
@@ -40,34 +55,38 @@ export function RoleplayCard({
             {categoryLabel}
           </Chip>
 
-          {showActions && (
-            <Dropdown >
-              <DropdownTrigger>
-                <Button
-                  isIconOnly
-                  size="sm"
-                  variant="ghost"
-                  className="text-[#6B7280] -mt-1 -mr-1"
-                  aria-label="Opções do role-play"
-                >
-                  <EllipsisVerticalIcon className="w-5 h-5" />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                aria-label="Ações do role-play"
-                items={[
-                  { key: "view", label: "Ver detalhes", action: onView },
-                  ...(onEdit ? [{ key: "edit", label: "Editar", action: onEdit }] : []),
-                ]}
+          <Dropdown>
+            <DropdownTrigger>
+              <Button
+                isIconOnly
+                size="sm"
+                variant="ghost"
+                className="text-[#6B7280] -mt-1 -mr-1 rounded-lg hover:bg-[#F9FAFB] transition-colors"
+                aria-label="Opções do role-play"
               >
-                {(item) => (
-                  <DropdownItem key={item.key} onPress={item.action}>
-                    {item.label}
-                  </DropdownItem>
-                )}
-              </DropdownMenu>
-            </Dropdown>
-          )}
+                <EllipsisVerticalIcon className="w-5 h-5" />
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu 
+              aria-label="Ações do role-play"
+              items={menuItems}
+              classNames={{
+                base: "rounded-xl shadow-lg border-2 border-[#E5E7EB] bg-white p-2",
+                list: "gap-1",
+              }}
+            >
+              {(item) => (
+                <DropdownItem 
+                  key={item.key}
+                  className={item.className || "rounded-lg hover:bg-[#F9FAFB] transition-colors"}
+                  color={item.color}
+                  onPress={item.action}
+                >
+                  {item.label}
+                </DropdownItem>
+              )}
+            </DropdownMenu>
+          </Dropdown>
         </div>
 
         {/* Title and description */}
@@ -77,7 +96,7 @@ export function RoleplayCard({
               onClick={onView}
               className="text-left w-full group"
             >
-              <h3 className="text-lg font-semibold text-[#111827] leading-tight group-hover:text-[#2E63CD] transition-colors">
+              <h3 className="text-lg font-semibold text-[#111827] leading-tight group-hover:text-[#3B82F6] transition-colors">
                 {roleplay.title}
               </h3>
             </button>
@@ -100,12 +119,9 @@ export function RoleplayCard({
         {/* Agent info */}
         <div className="flex items-center gap-3 pt-2 border-t border-[#E5E7EB]">
           <Avatar
+            src={roleplay.agent.avatar}
             name={roleplay.agent.name}
             size="sm"
-            className="ring-2 ring-offset-2"
-            style={{
-              ["--tw-ring-color" as string]: categoryColor,
-            }}
           />
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-[#1F2937] truncate">
@@ -121,7 +137,8 @@ export function RoleplayCard({
       <CardFooter className="px-6 pb-6 pt-0">
         <Button
           disableRipple={false}
-          className="w-full font-medium bg-[#2E63CD] hover:bg-[#2451A8] text-white"
+          variant="bordered"
+          className="w-full font-medium border-2 border-[#E5E7EB] text-[#6B7280] hover:bg-[#F9FAFB] hover:border-[#D1D5DB] hover:text-[#374151] focus:bg-[#EBF0FA] rounded-xl shadow-none transition-all duration-200 min-h-[48px]"
           onPress={onPractice}
         >
           Praticar
