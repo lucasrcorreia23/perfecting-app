@@ -1,4 +1,5 @@
 export { RoleplayCard } from "./RoleplayCard";
+export { ScenarioCard } from "./ScenarioCard";
 export { VoiceInterface } from "./VoiceInterface";
 export { FeedbackPanel } from "./FeedbackPanel";
 export { AudioPlayer } from "./AudioPlayer";

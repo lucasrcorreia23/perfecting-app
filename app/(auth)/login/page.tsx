@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Checkbox, Spinner } from "@heroui/react";
+import { Button, Checkbox } from "@heroui/react";
 import { FormInput } from "@/components/ui";
 import Link from "next/link";
 import { useAuth } from "@/contexts";
@@ -13,6 +13,8 @@ import {
   UserGroupIcon,
   ShieldCheckIcon,
   UserIcon,
+  EnvelopeIcon,
+  LockClosedIcon,
 } from "@heroicons/react/24/outline";
 
 export default function LoginPage() {
@@ -32,7 +34,18 @@ export default function LoginPage() {
     <div className="min-h-screen flex">
       {/* Left side - Marketing */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-[#2E63CD] to-[#1D4185] p-12 flex-col justify-between relative overflow-hidden">
-        {/* Background pattern */}
+        {/* Background image - Happy salesperson */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: "url('https://images.unsplash.com/photo-1556761175-b413da4baf72?q=80&w=1974&auto=format&fit=crop')"
+          }}
+        />
+        
+        {/* Blue overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#2E63CD]/95 to-[#1D4185]/89" />
+        
+        {/* Background pattern on top of overlay */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
           <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
@@ -47,9 +60,9 @@ export default function LoginPage() {
         </div>
 
         {/* Marketing content */}
-        <div className="relative z-10 space-y-8">
+        <div className="relative z-10 space-y-8 p-12 mb-32">
           <div>
-            <h1 className="text-4xl font-bold text-white leading-tight mb-4">
+            <h1 className="text-5xl font-bold text-white leading-tight mb-4">
               Transforme seu time de vendas com IA
             </h1>
             <p className="text-lg text-white/80">
@@ -73,21 +86,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Stats */}
-        <div className="relative z-10 grid grid-cols-3 gap-8">
-          <div>
-            <div className="text-3xl font-bold text-white">35%</div>
-            <div className="text-sm text-white/70">Aumento em conversões</div>
-          </div>
-          <div>
-            <div className="text-3xl font-bold text-white">10k+</div>
-            <div className="text-sm text-white/70">Sessões realizadas</div>
-          </div>
-          <div>
-            <div className="text-3xl font-bold text-white">500+</div>
-            <div className="text-sm text-white/70">Empresas ativas</div>
-          </div>
-        </div>
+       
       </div>
 
       {/* Right side - Login Form */}
@@ -145,6 +144,7 @@ export default function LoginPage() {
               placeholder="seu@email.com"
               value={email}
               onValueChange={setEmail}
+              startContent={<EnvelopeIcon className="w-5 h-5 text-[#6B7280]" />}
               isRequired
             />
 
@@ -156,6 +156,7 @@ export default function LoginPage() {
               placeholder="Sua senha"
               value={password}
               onValueChange={setPassword}
+              startContent={<LockClosedIcon className="w-5 h-5 text-[#6B7280]" />}
               endContent={
                 <button
                   type="button"
@@ -186,6 +187,7 @@ export default function LoginPage() {
                       "border-[#E5E7EB]",
                       "rounded-sm",
                       "before:hidden",
+                      "after:bg-[#2E63CD]",
                       "group-data-[selected=true]:bg-[#2E63CD]",
                       "group-data-[selected=true]:border-[#2E63CD]",
                     ],
@@ -208,7 +210,9 @@ export default function LoginPage() {
               className="w-full bg-[#2E63CD] hover:bg-[#2451A8] text-white font-medium rounded-xl shadow-none transition-all duration-200 min-h-[48px] mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
               isDisabled={isLoading}
               isLoading={isLoading}
-              spinner={<Spinner size="sm" color="white" />}
+              spinner={
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full spinner-rotate" />
+              }
             >
               {userType === "admin" ? "Entrar como Administrador" : "Entrar como Vendedor"}
             </Button>

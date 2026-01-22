@@ -138,7 +138,7 @@ export function RoleplayCard({
         <Button
           disableRipple={false}
           variant="bordered"
-          className="w-full font-medium border-2 border-[#E5E7EB] text-[#6B7280] hover:bg-[#F9FAFB] hover:border-[#D1D5DB] hover:text-[#374151] focus:bg-[#EBF0FA] rounded-xl shadow-none transition-all duration-200 min-h-[48px]"
+          className="w-full font-semibold border-2 border-[#E5E7EB] text-[#1F2937] hover:bg-[#F9FAFB] hover:border-[#D1D5DB] hover:text-[#111827] focus:bg-[#EBF0FA] rounded-xl shadow-none transition-all duration-200 min-h-[48px]"
           onPress={onPractice}
         >
           Praticar

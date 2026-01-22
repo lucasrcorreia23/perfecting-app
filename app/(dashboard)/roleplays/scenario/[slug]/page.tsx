@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button, Card, CardBody, Chip, Progress, Avatar, Ripple } from "@heroui/react";
 import {
@@ -20,6 +20,7 @@ import {
 import { cn, formatDuration } from "@/lib/utils";
 import { mockScenarios } from "@/lib/mock-data";
 import type { RoleplayCharacter } from "@/types";
+import { VoiceInterface } from "@/components/roleplay/VoiceInterface";
 
 type ConnectionStatus = "idle" | "connecting" | "connected" | "disconnected";
 
@@ -27,6 +28,10 @@ export default function ScenarioPage() {
   const params = useParams();
   const router = useRouter();
   const slug = params.slug as string;
+  
+  // Obter parâmetro de personagem da URL
+  const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+  const characterIdFromUrl = searchParams?.get('character');
 
   const scenario = useMemo(() => {
     return mockScenarios.find((s) => s.slug === slug);
@@ -40,6 +45,20 @@ export default function ScenarioPage() {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [showInfoPanel, setShowInfoPanel] = useState(false);
+
+  // Auto-selecionar personagem se vier da URL
+  useEffect(() => {
+    if (characterIdFromUrl && scenario) {
+      const character = scenario.characters.find(c => c.id === characterIdFromUrl);
+      if (character) {
+        setSelectedCharacter(character);
+        // Iniciar chamada automaticamente
+        setTimeout(() => {
+          handleStartCall();
+        }, 500);
+      }
+    }
+  }, [characterIdFromUrl, scenario]);
 
   const isInCall = connectionStatus === "connecting" || connectionStatus === "connected";
 
@@ -507,129 +526,24 @@ export default function ScenarioPage() {
                 </div>
               </div>
             ) : connectionStatus === "connected" ? (
-              /* In call state */
-              <div className="h-full flex flex-col items-center justify-center p-6 relative overflow-hidden" style={getCharacterBackground(selectedCharacter)}>
-                {/* Tech pattern overlay */}
-                <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
-                  <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                      <pattern id="tech-connected" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
-                        <circle cx="20" cy="20" r="1" fill="currentColor" />
-                        <circle cx="50" cy="50" r="1.5" fill="currentColor" />
-                        <circle cx="80" cy="80" r="1" fill="currentColor" />
-                        <path d="M20,20 L50,50 L80,80" stroke="currentColor" strokeWidth="0.3" opacity="0.3" fill="none" />
-                      </pattern>
-                    </defs>
-                    <rect width="100%" height="100%" fill="url(#tech-connected)" />
-                  </svg>
-                </div>
-                <div className="flex flex-col items-center justify-center max-w-md mx-auto text-center relative z-10">
-                  {/* Status */}
-                  <Chip
-                    color={isSpeaking ? "primary" : isListening ? "success" : "default"}
-                    variant="flat"
-                    className="mb-8"
-                  >
-                    {isSpeaking ? "Falando..." : isListening ? "Ouvindo..." : "Conectado"}
-                  </Chip>
-
-                  {/* Avatar */}
-                  <div className="relative inline-block mb-6">
-                    <div
-                      className={cn(
-                        "absolute inset-0 rounded-full transition-all duration-300",
-                        isSpeaking && "animate-pulse bg-[#bfd5ff]/20 scale-110"
-                      )}
-                    />
-                    <Avatar
-                      src={selectedCharacter.avatar}
-                      name={selectedCharacter.name}
-                      className="w-32 h-32 text-4xl"
-                    />
-                    {isSpeaking && (
-                      <div className="absolute -bottom-2 left-1/2 -translate-x-1/2">
-                        <SpeakerWaveIcon className="w-6 h-6 text-[#bfd5ff] animate-pulse" />
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Name */}
-                  <h3 className="text-2xl font-semibold text-[#111827]">
-                    {selectedCharacter.name}
-                  </h3>
-                  <p className="text-[#6B7280] mb-6">{selectedCharacter.role}</p>
-
-                  {/* Waveform */}
-                  <div className="flex items-center justify-center gap-1.5 h-12 mb-6">
-                    {[...Array(12)].map((_, i) => (
-                      <div
-                        key={i}
-                        className={cn(
-                          "w-1.5 rounded-full bg-[#bfd5ff] transition-all",
-                          (isSpeaking || isListening) ? "waveform-bar" : "h-2"
-                        )}
-                        style={{
-                          animationDelay: `${i * 0.08}s`,
-                        }}
-                      />
-                    ))}
-                  </div>
-
-                  {/* Timer */}
-                  <div className="text-4xl font-mono text-[#111827] mb-10">
-                    {formatDuration(duration)}
-                  </div>
-
-                  {/* Controls */}
-                  <div className="flex items-center justify-center gap-3">
-                    <button
-                      onClick={() => setIsMuted(!isMuted)}
-                      className={cn(
-                        "w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-200",
-                        isMuted
-                          ? "bg-[#FEE2E2] text-[#991B1B] border-2 border-[#FECACA]"
-                          : "bg-[#F5F5F5] text-[#6B7280] border border-[#E5E7EB] hover:bg-[#EBEBEB]"
-                      )}
-                    >
-                      <MicrophoneIcon className="w-6 h-6" />
-                    </button>
-
-                    <button
-                      onClick={handleEndCall}
-                      className="w-16 h-16 rounded-2xl flex items-center justify-center bg-[#EF4444] text-white border-2 border-[#DC2626] hover:bg-[#DC2626] transition-all duration-200"
-                    >
-                      <XMarkIcon className="w-7 h-7" />
-                    </button>
-
-                    <button
-                      onClick={() => setIsPaused(!isPaused)}
-                      className={cn(
-                        "w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-200",
-                        isPaused
-                          ? "bg-[#FEF3C7] text-[#92400E] border-2 border-[#FDE68A]"
-                          : "bg-[#F5F5F5] text-[#6B7280] border border-[#E5E7EB] hover:bg-[#EBEBEB]"
-                      )}
-                    >
-                      {isPaused ? (
-                        <PlayIcon className="w-6 h-6" />
-                      ) : (
-                        <PauseIcon className="w-6 h-6" />
-                      )}
-                    </button>
-
-                    <button
-                      onClick={() => setShowInfoPanel(!showInfoPanel)}
-                      className={cn(
-                        "w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-200",
-                        showInfoPanel
-                          ? "bg-[#EBF0FA] text-[#bfd5ff] border-2 border-[#C5D4ED]"
-                          : "bg-[#F5F5F5] text-[#6B7280] border border-[#E5E7EB] hover:bg-[#EBEBEB]"
-                      )}
-                    >
-                      <InformationCircleIcon className="w-6 h-6" />
-                    </button>
-                  </div>
-                </div>
+              /* In call state - VoiceInterface com Orb */
+              <div className="h-full flex flex-col items-center justify-center relative overflow-hidden" style={getCharacterBackground(selectedCharacter)}>
+                <VoiceInterface
+                  agent={{
+                    id: selectedCharacter.id,
+                    name: selectedCharacter.name,
+                    role: selectedCharacter.role,
+                    avatar: selectedCharacter.avatar,
+                    difficulty: selectedCharacter.difficulty,
+                    personality: selectedCharacter.personality.split(', '),
+                    objectives: selectedCharacter.objectives
+                  } as any}
+                  roleplayId="current-roleplay"
+                  redirectToAnalytics={false}
+                  useElevenLabsAgent={false}
+                  demoMode={true}
+                  onEnd={handleEndCall}
+                />
               </div>
             ) : (
               /* Disconnected state */

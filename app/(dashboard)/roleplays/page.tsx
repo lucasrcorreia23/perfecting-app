@@ -6,82 +6,62 @@ import { Input, Chip, Button, Select, SelectItem, Modal, ModalContent, ModalHead
 import { useRouter } from "next/navigation";
 import { MagnifyingGlassIcon, FunnelIcon, Squares2X2Icon, ListBulletIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { RoleplayCard } from "@/components/roleplay";
-import { mockRoleplays } from "@/lib/mock-data";
-import { getCategoryLabel, getCategoryColor, cn } from "@/lib/utils";
-import type { RoleplayCategory } from "@/types";
+import { mockScenarios } from "@/lib/mock-data";
+import { cn } from "@/lib/utils";
+import type { RoleplayCharacter } from "@/types";
+import { useAuth } from "@/contexts";
 
-interface RoleplaysPageProps {
-  userRole?: "admin" | "seller";
-}
+// Criar lista de todos os personagens com informação do cenário
+const allCharacters = mockScenarios.flatMap(scenario => 
+  scenario.characters.map(character => ({
+    ...character,
+    scenarioName: scenario.name,
+    scenarioSlug: scenario.slug,
+    scenarioIcon: scenario.icon,
+    scenarioColor: scenario.color,
+  }))
+);
 
-const categories: { value: RoleplayCategory | "all"; label: string }[] = [
-  { value: "all", label: "Todas as categorias" },
-  { value: "behavioral", label: "Comportamental" },
-  { value: "technical", label: "Técnico" },
-  { value: "objection", label: "Objeções" },
-  { value: "closing", label: "Fechamento" },
-  { value: "custom", label: "Personalizado" },
-];
-
-const difficulties = [
-  { value: "all", label: "Todas as dificuldades" },
-  { value: "beginner", label: "Iniciante" },
-  { value: "intermediate", label: "Intermediário" },
-  { value: "advanced", label: "Avançado" },
-];
-
-export default function RoleplaysPage({ userRole = "seller" }: RoleplaysPageProps) {
+export default function RoleplaysPage() {
+  const { user, isAdmin } = useAuth();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [selectedDifficulty, setSelectedDifficulty] = useState<string>("all");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [selectedScenario, setSelectedScenario] = useState<string>("all");
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [roleplayToDelete, setRoleplayToDelete] = useState<string | null>(null);
+  const [characterToDelete, setCharacterToDelete] = useState<string | null>(null);
 
-  const filteredRoleplays = useMemo(() => {
-    return mockRoleplays.filter((roleplay) => {
+  const filteredCharacters = useMemo(() => {
+    return allCharacters.filter((character) => {
       const matchesSearch =
-        roleplay.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        roleplay.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        roleplay.agent.name.toLowerCase().includes(searchQuery.toLowerCase());
+        character.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        character.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        character.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        character.scenarioName.toLowerCase().includes(searchQuery.toLowerCase());
 
-      const matchesCategory =
-        selectedCategory === "all" || roleplay.category === selectedCategory;
+      const matchesScenario =
+        selectedScenario === "all" || character.scenarioSlug === selectedScenario;
 
-      const matchesDifficulty =
-        selectedDifficulty === "all" || roleplay.difficulty === selectedDifficulty;
-
-      return matchesSearch && matchesCategory && matchesDifficulty;
+      return matchesSearch && matchesScenario;
     });
-  }, [searchQuery, selectedCategory, selectedDifficulty]);
+  }, [searchQuery, selectedScenario]);
 
-  const handlePractice = (roleplay: any) => {
-    router.push(`/roleplays/scenario/${roleplay.scenarioSlug}`);
+  const handlePracticeCharacter = (character: any) => {
+    // Redireciona para a página do cenário com o personagem
+    router.push(`/roleplays/scenario/${character.scenarioSlug}?character=${character.id}`);
   };
 
-  const handleEdit = (roleplayId: string) => {
-    router.push(`/roleplays/create?edit=${roleplayId}`);
-  };
-
-  const handleDuplicate = (roleplayId: string) => {
-    console.log("Duplicating roleplay:", roleplayId);
-    // TODO: Implementar lógica de duplicação
-    alert("Roleplay duplicado com sucesso! (Mock)");
-  };
-
-  const handleDeleteClick = (roleplayId: string) => {
-    setRoleplayToDelete(roleplayId);
+  const handleDeleteClick = (characterId: string) => {
+    setCharacterToDelete(characterId);
     setDeleteModalOpen(true);
   };
 
   const handleDeleteConfirm = () => {
-    if (roleplayToDelete) {
-      console.log("Deleting roleplay:", roleplayToDelete);
+    if (characterToDelete) {
+      console.log("Deleting character:", characterToDelete);
       // TODO: Implementar lógica de deleção
-      alert("Roleplay deletado com sucesso! (Mock)");
+      alert("Personagem deletado com sucesso! (Mock)");
       setDeleteModalOpen(false);
-      setRoleplayToDelete(null);
+      setCharacterToDelete(null);
     }
   };
 
@@ -90,15 +70,15 @@ export default function RoleplaysPage({ userRole = "seller" }: RoleplaysPageProp
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="heading-3">Biblioteca de Role-plays</h1>
+          <h1 className="heading-3">Biblioteca de Personagens</h1>
           <p className="text-[#6B7280] mt-1">
-            {userRole === "admin" 
-              ? "Gerencie e crie novos roleplays para sua equipe"
-              : "Escolha um cenário e pratique suas habilidades de vendas"}
+            {isAdmin
+              ? "Gerencie personagens de todos os cenários"
+              : "Escolha um personagem e pratique suas habilidades"}
           </p>
         </div>
 
-        {userRole === "admin" && (
+        {isAdmin && (
           <Button
             className="bg-[#2E63CD] hover:bg-[#2451A8] text-white font-medium rounded-xl shadow-md hover:shadow-lg transition-all duration-200"
             onPress={() => router.push("/roleplays/create")}
@@ -119,49 +99,35 @@ export default function RoleplaysPage({ userRole = "seller" }: RoleplaysPageProp
         />
 
         <div className="flex flex-wrap gap-4">
+          {/* Filtro de Cenários */}
           <Select
-            placeholder="Todas as categorias"
-            selectedKeys={new Set([selectedCategory])}
-            onSelectionChange={(keys) => setSelectedCategory(Array.from(keys)[0] as string)}
-            className="w-48"
-            aria-label="Categoria"
+            placeholder="Todos os cenários"
+            selectedKeys={new Set([selectedScenario])}
+            onSelectionChange={(keys) => setSelectedScenario(Array.from(keys)[0] as string)}
+            className="w-56"
+            aria-label="Cenário"
             radius="lg"
             classNames={{
               trigger: "min-h-[48px] !bg-white !border-2 !border-[#E5E7EB] !rounded-xl shadow-sm hover:!border-[#D1D5DB] hover:shadow-md",
               value: "text-[#1F2937] font-medium",
               innerWrapper: "py-2",
             }}
+            items={[
+              { value: "all", label: "Todos os cenários" },
+              ...mockScenarios.map(s => ({ value: s.slug, label: `${s.icon} ${s.name}` }))
+            ]}
           >
-            {categories.map((category) => (
-              <SelectItem key={category.value}>{category.label}</SelectItem>
-            ))}
+            {(item: any) => (
+              <SelectItem key={item.value}>
+                {item.label}
+              </SelectItem>
+            )}
           </Select>
-
-          <Select
-            placeholder="Todas as dificuldades"
-            selectedKeys={new Set([selectedDifficulty])}
-            onSelectionChange={(keys) => setSelectedDifficulty(Array.from(keys)[0] as string)}
-            className="w-48"
-            aria-label="Dificuldade"
-            radius="lg"
-            classNames={{
-              trigger: "min-h-[48px] !bg-white !border-2 !border-[#E5E7EB] !rounded-xl shadow-sm hover:!border-[#D1D5DB] hover:shadow-md",
-              value: "text-[#1F2937] font-medium",
-              innerWrapper: "py-2",
-            }}
-          >
-            {difficulties.map((difficulty) => (
-              <SelectItem key={difficulty.value}>{difficulty.label}</SelectItem>
-            ))}
-          </Select>
-
-          {/* View mode toggle */}
-         
         </div>
       </div>
 
       {/* Active filters */}
-      {(selectedCategory !== "all" || selectedDifficulty !== "all" || searchQuery) && (
+      {(selectedScenario !== "all" || searchQuery) && (
         <div className="flex items-center gap-2 flex-wrap">
           <span className="text-sm text-[#6B7280]">Filtros ativos:</span>
           {searchQuery && (
@@ -173,25 +139,14 @@ export default function RoleplaysPage({ userRole = "seller" }: RoleplaysPageProp
               Busca: {searchQuery}
             </Chip>
           )}
-          {selectedCategory !== "all" && (
+          {selectedScenario !== "all" && (
             <Chip
               variant="flat"
               size="sm"
-              style={{
-                backgroundColor: `${getCategoryColor(selectedCategory)}15`,
-                color: getCategoryColor(selectedCategory),
-              }}
+              className="bg-blue-50 text-blue-700"
             >
-              {getCategoryLabel(selectedCategory)}
-            </Chip>
-          )}
-          {selectedDifficulty !== "all" && (
-            <Chip
-              variant="flat"
-              color="default"
-              size="sm"
-            >
-              {difficulties.find((d) => d.value === selectedDifficulty)?.label}
+              {mockScenarios.find((s) => s.slug === selectedScenario)?.icon}{" "}
+              {mockScenarios.find((s) => s.slug === selectedScenario)?.name}
             </Chip>
           )}
           <Button
@@ -200,8 +155,7 @@ export default function RoleplaysPage({ userRole = "seller" }: RoleplaysPageProp
             className="text-[#6B7280] rounded-lg hover:bg-[#F9FAFB] transition-colors"
             onPress={() => {
               setSearchQuery("");
-              setSelectedCategory("all");
-              setSelectedDifficulty("all");
+              setSelectedScenario("all");
             }}
           >
             Limpar filtros
@@ -211,28 +165,40 @@ export default function RoleplaysPage({ userRole = "seller" }: RoleplaysPageProp
 
       {/* Results count */}
       <div className="text-sm text-[#6B7280]">
-        {filteredRoleplays.length} role-play{filteredRoleplays.length !== 1 && "s"} encontrado{filteredRoleplays.length !== 1 && "s"}
+        {filteredCharacters.length} personagem{filteredCharacters.length !== 1 && "s"} encontrado{filteredCharacters.length !== 1 && "s"}
       </div>
 
-      {/* Roleplay grid */}
-      {filteredRoleplays.length > 0 ? (
-        <div
-          className={
-            viewMode === "grid"
-              ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
-              : "space-y-4"
-          }
-        >
-          {filteredRoleplays.map((roleplay) => (
+      {/* Characters grid */}
+      {filteredCharacters.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          {filteredCharacters.map((character) => (
             <RoleplayCard
-              key={roleplay.id}
-              roleplay={roleplay}
-              onPractice={() => handlePractice(roleplay)}
-              onView={() => router.push(`/roleplays/${roleplay.id}/analytics`)}
-              onEdit={userRole === "admin" ? () => handleEdit(roleplay.id) : undefined}
-              onDuplicate={userRole === "admin" ? () => handleDuplicate(roleplay.id) : undefined}
-              onDelete={userRole === "admin" ? () => handleDeleteClick(roleplay.id) : undefined}
-              showAdminActions={userRole === "admin"}
+              key={character.id}
+              roleplay={{
+                id: character.id,
+                title: character.name,
+                description: `${character.role} - ${character.company}. ${character.context}`,
+                category: "custom",
+                difficulty: character.difficulty,
+                estimatedDuration: 15,
+                agent: {
+                  id: character.id,
+                  name: character.name,
+                  role: character.role,
+                  avatar: character.avatar,
+                  voiceId: character.voiceId,
+                  personality: character.personality,
+                  context: character.context,
+                },
+                scenarioSlug: character.scenarioSlug,
+                objectives: character.objectives || [],
+                tags: [character.scenarioName],
+                createdBy: "system",
+                createdAt: new Date(),
+                updatedAt: new Date(),
+              }}
+              onPractice={() => handlePracticeCharacter(character)}
+              showAdminActions={false}
             />
           ))}
         </div>
@@ -240,7 +206,7 @@ export default function RoleplaysPage({ userRole = "seller" }: RoleplaysPageProp
         <div className="text-center py-16">
           <div className="text-6xl mb-4">🔍</div>
           <h3 className="text-lg font-semibold text-[#111827] mb-2">
-            Nenhum role-play encontrado
+            Nenhum personagem encontrado
           </h3>
           <p className="text-[#6B7280] mb-4">
             Tente ajustar os filtros ou buscar por outros termos
@@ -250,8 +216,7 @@ export default function RoleplaysPage({ userRole = "seller" }: RoleplaysPageProp
             className="border border-[#E5E7EB] text-[#6B7280] rounded-xl hover:bg-[#F9FAFB] hover:border-[#D1D5DB] hover:text-[#374151] transition-all duration-200"
             onPress={() => {
               setSearchQuery("");
-              setSelectedCategory("all");
-              setSelectedDifficulty("all");
+              setSelectedScenario("all");
             }}
           >
             Limpar filtros
@@ -274,7 +239,7 @@ export default function RoleplaysPage({ userRole = "seller" }: RoleplaysPageProp
           </ModalHeader>
           <ModalBody className="py-6 px-6">
             <p className="text-[#1F2937]">
-              Tem certeza que deseja deletar este roleplay? Esta ação não pode ser desfeita.
+              Tem certeza que deseja deletar este personagem? Esta ação não pode ser desfeita.
             </p>
           </ModalBody>
           <ModalFooter className="border-t border-[#E5E7EB] px-6 py-4">
@@ -297,4 +262,5 @@ export default function RoleplaysPage({ userRole = "seller" }: RoleplaysPageProp
     </div>
   );
 }
+ 
  
