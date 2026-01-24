@@ -69,7 +69,7 @@ export function EditableList({
   return (
     <div className="space-y-3">
       {/* Input para adicionar novo item */}
-      <div className="flex gap-2">
+      <div className="flex flex-col sm:flex-row gap-2">
         <Input
           placeholder={placeholder}
           value={newItem}
@@ -82,9 +82,10 @@ export function EditableList({
             input: "text-[#1F2937]",
             inputWrapper: "border-2 border-[#E5E7EB] hover:border-[#2E63CD] rounded-xl min-h-[48px]",
           }}
+          className="flex-1"
         />
         <Button
-          className="bg-[#2E63CD] hover:bg-[#2451A8] text-white font-medium rounded-xl shadow-sm hover:shadow-md transition-all duration-200 min-h-[48px] px-6"
+          className="bg-[#2E63CD] hover:bg-[#2451A8] text-white font-medium rounded-xl shadow-sm hover:shadow-md transition-all duration-200 min-h-[48px] px-6 flex-shrink-0 w-full sm:w-auto"
           onPress={handleAdd}
           isDisabled={!newItem.trim() || (maxItems ? items.length >= maxItems : false)}
         >
@@ -100,7 +101,7 @@ export function EditableList({
             <div
               key={index}
               className={cn(
-                "flex items-center gap-3 p-3 rounded-xl border-2 transition-all duration-200",
+                "flex items-center gap-2 sm:gap-3 p-3 rounded-xl border-2 transition-all duration-200",
                 editingIndex === index
                   ? "border-[#2E63CD] bg-[#EBF0FA]"
                   : "border-[#E5E7EB] bg-white hover:border-[#D1D5DB]"
@@ -108,7 +109,7 @@ export function EditableList({
             >
               {/* Drag handle (visual only for now) */}
               <button
-                className="cursor-grab text-[#9CA3AF] hover:text-[#6B7280] transition-colors"
+                className="cursor-grab text-[#9CA3AF] hover:text-[#6B7280] transition-colors flex-shrink-0"
                 aria-label="Reordenar"
               >
                 <Bars3Icon className="w-5 h-5" />
@@ -133,13 +134,14 @@ export function EditableList({
                     input: "text-[#1F2937]",
                     inputWrapper: "border-2 border-[#2E63CD] rounded-lg min-h-[40px]",
                   }}
+                  className="flex-1 min-w-0"
                 />
               ) : (
-                <span className="flex-1 text-[#1F2937]">{item}</span>
+                <span className="flex-1 text-[#1F2937] break-words min-w-0">{item}</span>
               )}
 
               {/* Ações */}
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1 flex-shrink-0">
                 {editingIndex === index ? (
                   <>
                     <Button
@@ -166,7 +168,7 @@ export function EditableList({
                       isIconOnly
                       size="sm"
                       variant="light"
-                      className="rounded-lg text-[#6B7280] hover:bg-[#F9FAFB] hover:text-[#2E63CD]"
+                      className="rounded-lg text-[#6B7280] hover:bg-[#F9FAFB] hover:text-[#2E63CD] flex-shrink-0"
                       onPress={() => handleEdit(index)}
                       aria-label="Editar"
                     >
@@ -176,7 +178,7 @@ export function EditableList({
                       isIconOnly
                       size="sm"
                       variant="light"
-                      className="rounded-lg text-[#6B7280] hover:bg-[#FEE2E2] hover:text-[#EF4444]"
+                      className="rounded-lg text-[#6B7280] hover:bg-[#FEE2E2] hover:text-[#EF4444] flex-shrink-0"
                       onPress={() => handleRemove(index)}
                       aria-label="Remover"
                     >

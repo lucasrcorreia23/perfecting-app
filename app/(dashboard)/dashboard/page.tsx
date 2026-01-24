@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardHeader, CardBody, Button, Chip, Progress, Avatar } from "@heroui/react";
+import { Card, CardHeader, CardBody, Button, Chip, Avatar } from "@heroui/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -15,6 +15,7 @@ import { RoleplayCard } from "@/components/roleplay";
 import { mockRoleplays, mockUserMetrics, mockLeaderboard } from "@/lib/mock-data";
 import { cn, getScoreColor } from "@/lib/utils";
 import { useAuth } from "@/contexts";
+import { ProgressBar } from "@/components/ui";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -128,7 +129,7 @@ export default function DashboardPage() {
               <RoleplayCard
                 key={roleplay.id}
                 roleplay={roleplay}
-                onPractice={() => window.location.href = `/roleplays/scenario/${roleplay.scenarioSlug}`}
+                onPractice={() => router.push(`/roleplays/scenario/${roleplay.scenarioSlug}?character=${roleplay.agent.id}`)}
                 onView={() => router.push(`/roleplays/${roleplay.id}/analytics`)}
               />
             ))}
@@ -154,11 +155,10 @@ export default function DashboardPage() {
                         {week.sessions} sessões • {week.averageScore} pts
                       </span>
                     </div>
-                    <Progress
+                    <ProgressBar
                       value={week.averageScore}
-                      maxValue={100}
                       color={week.averageScore >= 80 ? "success" : week.averageScore >= 60 ? "warning" : "danger"}
-                      className="h-2"
+                      size="sm"
                     />
                   </div>
                 ))}

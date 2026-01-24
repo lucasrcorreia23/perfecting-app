@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardHeader, CardBody, Chip, Progress, Select, SelectItem } from "@heroui/react";
+import { Card, CardHeader, CardBody, Chip, Select, SelectItem } from "@heroui/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -14,6 +14,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { mockUserMetrics, mockFeedback } from "@/lib/mock-data";
 import { cn, getScoreColor } from "@/lib/utils";
+import { ProgressBar } from "@/components/ui";
 
 const timeRanges = [
   { value: "7d", label: "Últimos 7 dias" },
@@ -180,18 +181,11 @@ export default function MetricsPage() {
                       </span>
                     </div>
                   </div>
-                  <div className="relative">
-                    <Progress
-                      value={week.averageScore}
-                      maxValue={100}
-                      color={week.averageScore >= 80 ? "success" : week.averageScore >= 60 ? "warning" : "danger"}
-                      radius="lg"
-                      size="md"
-                      classNames={{
-                        track: "bg-[#F3F4F6]",
-                      }}
-                    />
-                  </div>
+                  <ProgressBar
+                    value={week.averageScore}
+                    color={week.averageScore >= 80 ? "success" : week.averageScore >= 60 ? "warning" : "danger"}
+                    size="md"
+                  />
                 </div>
               ))}
             </div>
@@ -217,15 +211,10 @@ export default function MetricsPage() {
                         {category.score}/{category.maxScore}
                       </span>
                     </div>
-                    <Progress
+                    <ProgressBar
                       value={percentage}
-                      maxValue={100}
                       color={percentage >= 80 ? "success" : percentage >= 60 ? "warning" : "danger"}
-                      radius="lg"
                       size="sm"
-                      classNames={{
-                        track: "bg-[#F3F4F6]",
-                      }}
                     />
                     <p className="text-xs text-[#6B7280]">{category.feedback}</p>
                   </div>

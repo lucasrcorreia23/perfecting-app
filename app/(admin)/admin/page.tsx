@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardHeader, CardBody, Button, Chip, Progress, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Avatar, Select, SelectItem } from "@heroui/react";
+import { Card, CardHeader, CardBody, Button, Chip, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Avatar, Select, SelectItem } from "@heroui/react";
 import { useState } from "react";
 import Link from "next/link";
 import {
@@ -14,6 +14,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { mockLeaderboard, mockRoleplays } from "@/lib/mock-data";
 import { cn, getScoreColor } from "@/lib/utils";
+import { ProgressBar } from "@/components/ui";
 
 const timeRanges = [
   { value: "7d", label: "Últimos 7 dias" },
@@ -225,16 +226,11 @@ export default function AdminDashboardPage() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <Progress
+                          <ProgressBar
                             value={user.score}
-                            maxValue={100}
                             color={user.score >= 80 ? "success" : user.score >= 60 ? "warning" : "danger"}
-                            radius="lg"
                             size="sm"
                             className="max-w-24"
-                            classNames={{
-                              track: "bg-[#F3F4F6]",
-                            }}
                           />
                           <Chip
                             size="sm"

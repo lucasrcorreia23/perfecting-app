@@ -20,6 +20,18 @@ const config = {
               DEFAULT: "#2E63CD",
               foreground: "#FFFFFF",
             },
+            success: {
+              DEFAULT: "#10B981",
+              foreground: "#FFFFFF",
+            },
+            warning: {
+              DEFAULT: "#F59E0B",
+              foreground: "#FFFFFF",
+            },
+            danger: {
+              DEFAULT: "#EF4444",
+              foreground: "#FFFFFF",
+            },
           },
         },
       },

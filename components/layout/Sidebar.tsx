@@ -62,7 +62,6 @@ interface SidebarProps {
 const getNavigationItems = (variant: "seller" | "admin"): SidebarItem[] => {
   const roleplaySubmenu = [
     { label: "Biblioteca", href: "/roleplays", icon: BookOpenIcon },
-    ...(variant === "admin" ? [{ label: "Criar Roleplay", href: "/roleplays/create", icon: PlusCircleIcon }] : []),
     { label: "Venda B2B", href: "/roleplays/scenario/venda-b2b", icon: BriefcaseIcon },
     { label: "Suporte", href: "/roleplays/scenario/atendimento", icon: ChatBubbleLeftRightIcon },
     { label: "Negociação", href: "/roleplays/scenario/negociacao", icon: ScaleIcon },
@@ -237,6 +236,7 @@ export function Sidebar({ variant = "seller", user }: SidebarProps) {
               <DropdownTrigger>
                 <button className="p-2 rounded-xl hover:bg-[#F5F5F5] transition-colors">
                   <Avatar
+                    src={user?.avatar}
                     className="transition-transform"
                     name={user?.name || "Usuário"}
                     size="sm"
@@ -287,6 +287,7 @@ export function Sidebar({ variant = "seller", user }: SidebarProps) {
               <DropdownTrigger>
                 <button className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-[#F5F5F5] transition-colors text-left">
                   <Avatar
+                    src={user?.avatar}
                     className="transition-transform"
                     name={user?.name || "Usuário"}
                     size="sm"

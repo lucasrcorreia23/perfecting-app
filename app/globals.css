@@ -636,9 +636,9 @@ body {
 
 [data-slot="input-wrapper"] textarea,
 textarea[data-slot="input"] {
-  padding:12px 0 !important;
+  padding:12px 12px !important;
   border: none !important;
-  outline: none !important;
+  
 }
 
 /* Select Trigger */

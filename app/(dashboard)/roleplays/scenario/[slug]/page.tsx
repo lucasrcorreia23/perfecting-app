@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Button, Card, CardBody, Chip, Progress, Avatar, Ripple } from "@heroui/react";
 import {
   PhoneIcon,
@@ -27,11 +27,11 @@ type ConnectionStatus = "idle" | "connecting" | "connected" | "disconnected";
 export default function ScenarioPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const slug = params.slug as string;
   
   // Obter parâmetro de personagem da URL
-  const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
-  const characterIdFromUrl = searchParams?.get('character');
+  const characterIdFromUrl = searchParams.get('character');
 
   const scenario = useMemo(() => {
     return mockScenarios.find((s) => s.slug === slug);
@@ -48,14 +48,10 @@ export default function ScenarioPage() {
 
   // Auto-selecionar personagem se vier da URL
   useEffect(() => {
-    if (characterIdFromUrl && scenario) {
+    if (characterIdFromUrl && scenario && scenario.characters) {
       const character = scenario.characters.find(c => c.id === characterIdFromUrl);
       if (character) {
         setSelectedCharacter(character);
-        // Iniciar chamada automaticamente
-        setTimeout(() => {
-          handleStartCall();
-        }, 500);
       }
     }
   }, [characterIdFromUrl, scenario]);
@@ -481,7 +477,7 @@ export default function ScenarioPage() {
                     <Button
                       size="lg"
                       onPress={handleStartCall}
-                      className="px-12 py-7 bg-gradient-to-r from-[#2E63CD] via-[#3B82F6] to-[#60A5FA] hover:from-[#2451A8] hover:via-[#2563EB] hover:to-[#3B82F6] text-white font-semibold text-lg rounded-2xl shadow-[0_8px_30px_rgb(46,99,205,0.4)] hover:shadow-[0_12px_40px_rgb(46,99,205,0.5)] transform hover:scale-105 transition-all duration-300 border-0 animate-pulse-subtle"
+                      className="px-12 py-7 bg-gradient-to-r from-[#2E63CD] via-[#3B82F6] to-[#60A5FA] hover:from-[#2451A8] hover:via-[#2563EB] hover:to-[#3B82F6] text-white font-semibold text-lg rounded-2xl transform hover:scale-101 transition-all duration-300 border-0"
                     >
                       <PhoneIcon className="w-6 h-6" />
                       Iniciar Chamada

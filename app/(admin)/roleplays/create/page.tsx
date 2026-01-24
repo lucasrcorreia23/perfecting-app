@@ -88,7 +88,7 @@ export default function CreateRoleplayPage() {
   // STEP 1: Descrição do Roleplay
   const renderStep1 = () => (
     <div className="space-y-6">
-      <div className="text-center mb-6">
+      <div className="mb-6">
         <h2 className="text-xl font-bold text-[#111827] mb-2">
           Descrição do Roleplay
         </h2>
@@ -140,7 +140,7 @@ export default function CreateRoleplayPage() {
   // STEP 2: Contexto do Cenário
   const renderStep2 = () => (
     <div className="space-y-6">
-      <div className="text-center mb-6">
+      <div className="mb-6">
         <h2 className="text-xl font-bold text-[#111827] mb-2">
           Contexto
         </h2>
@@ -194,7 +194,7 @@ export default function CreateRoleplayPage() {
   // STEP 3: Customização do Personagem
   const renderStep3 = () => (
     <div className="space-y-6">
-      <div className="text-center mb-6">
+      <div className="mb-6">
         <h2 className="text-xl font-bold text-[#111827] mb-2">
           Persona
         </h2>
@@ -310,16 +310,22 @@ export default function CreateRoleplayPage() {
   // STEP 4: Rubrica - Objetivos (Opcional)
   const renderStep4 = () => (
     <div className="space-y-6">
-      <div className="text-center mb-6">
-        <h2 className="text-xl font-bold text-[#111827] mb-2">
-          Rubrica
-        </h2>
+      <div className="mb-6">
+        <div className="flex items-center gap-2 mb-2">
+          <h2 className="text-xl font-bold text-[#111827]">
+            Rubrica
+          </h2>
+          <Chip 
+            size="sm" 
+            variant="flat" 
+            className="bg-amber-100 text-amber-800 border border-amber-300 text-xs px-2 py-0.5 h-5"
+          >
+            Opcional
+          </Chip>
+        </div>
         <p className="text-sm text-[#6B7280]">
           Adicione até 10 objetivos principais que a IA levantará como perguntas de acompanhamento caso não sejam abordados
         </p>
-        <Chip size="sm" variant="flat" color="warning" className="mt-2">
-          Opcional
-        </Chip>
       </div>
 
       <Card className="bg-[#EBF0FA] border border-[#C5D4ED] rounded-xl">
@@ -345,16 +351,22 @@ export default function CreateRoleplayPage() {
   // STEP 5: Objeções (Opcional)
   const renderStep5 = () => (
     <div className="space-y-6">
-      <div className="text-center mb-6">
-        <h2 className="text-xl font-bold text-[#111827] mb-2">
-          Objeções
-        </h2>
+      <div className="mb-6">
+        <div className="flex items-center gap-2 mb-2">
+          <h2 className="text-xl font-bold text-[#111827]">
+            Objeções
+          </h2>
+          <Chip 
+            size="sm" 
+            variant="flat" 
+            className="bg-amber-100 text-amber-800 border border-amber-300 text-xs px-2 py-0.5 h-5"
+          >
+            Opcional
+          </Chip>
+        </div>
         <p className="text-sm text-[#6B7280]">
           Adicione até 15 objeções principais que a IA levantará como perguntas de acompanhamento caso não sejam abordadas
         </p>
-        <Chip size="sm" variant="flat" color="warning" className="mt-2">
-          Opcional
-        </Chip>
       </div>
 
       <Card className="bg-[#EBF0FA] border border-[#C5D4ED] rounded-xl">
@@ -387,16 +399,22 @@ export default function CreateRoleplayPage() {
   // STEP 6: Avançado (Opcional)
   const renderStep6 = () => (
     <div className="space-y-6">
-      <div className="text-center mb-6">
-        <h2 className="text-xl font-bold text-[#111827] mb-2">
-          Avançado
-        </h2>
+      <div className="mb-6">
+        <div className="flex items-center gap-2 mb-2">
+          <h2 className="text-xl font-bold text-[#111827]">
+            Avançado
+          </h2>
+          <Chip 
+            size="sm" 
+            variant="flat" 
+            className="bg-amber-100 text-amber-800 border border-amber-300 text-xs px-2 py-0.5 h-5"
+          >
+            Opcional
+          </Chip>
+        </div>
         <p className="text-sm text-[#6B7280]">
           Permitir que a IA encerre esta conversa
         </p>
-        <Chip size="sm" variant="flat" color="warning" className="mt-2">
-          Opcional
-        </Chip>
       </div>
 
       <Card className="bg-[#EBF0FA] border border-[#C5D4ED] rounded-xl">
@@ -500,8 +518,8 @@ export default function CreateRoleplayPage() {
   const isOptionalStep = [4, 5, 6].includes(step);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#FAFAFA] to-white">
-      <div className="max-w-3xl mx-auto p-6">
+    <div className="min-h-screen">
+      <div className="max-w-4xl mx-auto">
         {/* Header com gradiente sutil */}
         <div className="mb-8 relative">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(46,99,205,0.05)_0%,transparent_60%)] -z-10" />

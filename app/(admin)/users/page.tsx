@@ -190,8 +190,10 @@ export default function UsersPage() {
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <Avatar
+                        src={user.userAvatar}
                         name={user.userName}
                         size="sm"
+                        className="flex-shrink-0"
                       />
                       <div>
                         <p className="font-medium text-[#1F2937]">{user.userName}</p>

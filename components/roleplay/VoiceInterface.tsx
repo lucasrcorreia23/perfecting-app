@@ -14,6 +14,8 @@ import type { RoleplayAgent, TranscriptEntry } from "@/types";
 import { useConversation } from "@elevenlabs/react";
 import { generateId } from "@/lib/utils";
 import { Orb } from "@/components/ui/orb";
+import { useAuth } from "@/contexts";
+import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/outline";
 
 interface VoiceInterfaceProps {
   agent: RoleplayAgent;
@@ -35,6 +37,7 @@ export function VoiceInterface({
   demoMode = false, // Modo demo sem API
 }: VoiceInterfaceProps) {
   const router = useRouter();
+  const { user } = useAuth();
   const [duration, setDuration] = useState(0);
   const [transcript, setTranscript] = useState<TranscriptEntry[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -46,6 +49,9 @@ export function VoiceInterface({
   
   // Estado para offcanvas de informações
   const [showInfoPanel, setShowInfoPanel] = useState(false);
+  
+  // Estado para offcanvas de transcrição
+  const [showTranscriptPanel, setShowTranscriptPanel] = useState(false);
 
   // Hook oficial da ElevenLabs
   const conversation = useConversation({
@@ -294,142 +300,195 @@ export function VoiceInterface({
   return (
     <div className="relative flex gap-4 min-h-[600px] w-full">
       {/* Main content */}
-      <div className={cn(
-        "flex-1 flex flex-col items-center justify-center p-8 transition-all duration-300",
-        showInfoPanel && "mr-80"
-      )}>
-      {/* Connection status */}
-      <Chip
-        color={getStatusColor()}
-        variant="flat"
-        className="absolute top-4 right-4"
-      >
-        {getStatusMessage()}
-      </Chip>
+      <div className="flex-1 flex flex-col items-center justify-center p-8">
+        {/* Orb e Avatares - elemento principal */}
+        <div className="flex items-center justify-center gap-12 mb-12">
+          {/* Avatar do Usuário */}
+          <div className="flex flex-col items-center gap-3">
+            <Avatar
+              src={user?.avatar}
+              name={user?.name || "Você"}
+              className="w-20 h-20 text-xl border-4 border-white shadow-lg"
+            />
+            <p className="text-sm font-medium text-[#6B7280]">Você</p>
+          </div>
 
-      {/* Orb - elemento principal */}
-      <div className="flex flex-col items-center gap-6 mb-8">
-        <Orb
-          isActive={demoMode ? demoStatus === 'connected' : conversation.status === 'connected'}
-          isSpeaking={demoMode ? demoIsSpeaking : conversation.isSpeaking}
-          agentState={
-            demoMode
-              ? (demoIsSpeaking ? "talking" : demoStatus === 'connected' ? "listening" : null)
-              : (conversation.isSpeaking ? "talking" : conversation.status === 'connected' ? "listening" : null)
-          }
-          size="large"
-          colors={["#2E63CD", "#60A5FA"]}
-        />
-        
-        {/* Agent info abaixo do Orb */}
-        <div className="text-center">
-          <h2 className="text-2xl font-semibold text-[#111827]">{agent.name}</h2>
-          <p className="text-[#6B7280]">{agent.role}</p>
+          {/* Orb do Agente */}
+          <div className="flex flex-col items-center gap-6">
+            <Orb
+              isActive={demoMode ? demoStatus === 'connected' : conversation.status === 'connected'}
+              isSpeaking={demoMode ? demoIsSpeaking : conversation.isSpeaking}
+              agentState={
+                demoMode
+                  ? (demoIsSpeaking ? "talking" : demoStatus === 'connected' ? "listening" : null)
+                  : (conversation.isSpeaking ? "talking" : conversation.status === 'connected' ? "listening" : null)
+              }
+              size="large"
+              colors={["#2E63CD", "#60A5FA"]}
+            />
+            
+            {/* Agent info abaixo do Orb */}
+            <div className="text-center">
+              <h2 className="text-2xl font-semibold text-[#111827]">{agent.name}</h2>
+              <p className="text-[#6B7280]">{agent.role}</p>
+            </div>
+          </div>
         </div>
-      </div>
 
-      {/* Timer */}
-      <div className="text-4xl font-mono text-[#111827] mb-8">
-        {formatDuration(duration)}
-      </div>
+        {/* Controls */}
+        <div className="flex items-center gap-4 mb-8">
+          {/* Mic indicator */}
+          <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full">
+            <MicrophoneIcon 
+              className={cn(
+                "w-5 h-5 transition-colors",
+                (demoMode ? demoStatus === 'connected' : conversation.status === 'connected') ? "text-green-600" : "text-gray-400"
+              )} 
+            />
+            <span className="text-sm font-medium text-gray-700">
+              {(demoMode ? demoStatus === 'connected' : conversation.status === 'connected') ? 'Ativo' : 'Inativo'}
+            </span>
+          </div>
 
-      {/* Controls */}
-      <div className="flex items-center gap-4 mb-8">
-        {/* Mic indicator */}
-        <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full">
-          <MicrophoneIcon 
+          {/* Timer */}
+          <div className="text-2xl font-mono text-[#111827] px-4 py-2 bg-gray-100 rounded-full">
+            {formatDuration(duration)}
+          </div>
+
+          {/* End call button */}
+          <Button
+            isIconOnly
+            className="w-16 h-16 rounded-full bg-red-500 hover:bg-red-600 text-white shadow-lg"
+            onPress={handleEndCall}
+            isDisabled={demoMode ? demoStatus === 'disconnected' : conversation.status === 'disconnected'}
+            aria-label="Encerrar chamada"
+          >
+            <XMarkIcon className="w-8 h-8" />
+          </Button>
+
+          {/* Transcript button */}
+          <Button
+            isIconOnly
             className={cn(
-              "w-5 h-5 transition-colors",
-              (demoMode ? demoStatus === 'connected' : conversation.status === 'connected') ? "text-green-600" : "text-gray-400"
-            )} 
-          />
-          <span className="text-sm font-medium text-gray-700">
-            {(demoMode ? demoStatus === 'connected' : conversation.status === 'connected') ? 'Ativo' : 'Inativo'}
-          </span>
+              "w-14 h-14 rounded-full transition-colors shadow-md",
+              showTranscriptPanel
+                ? "bg-[#2E63CD] text-white hover:bg-[#1E4FB8]"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            )}
+            onPress={() => setShowTranscriptPanel(!showTranscriptPanel)}
+            aria-label="Transcrição"
+          >
+            <ChatBubbleLeftRightIcon className="w-7 h-7" />
+          </Button>
+
+          {/* Info button */}
+          <Button
+            isIconOnly
+            className={cn(
+              "w-14 h-14 rounded-full transition-colors shadow-md",
+              showInfoPanel
+                ? "bg-[#2E63CD] text-white hover:bg-[#1E4FB8]"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            )}
+            onPress={() => setShowInfoPanel(!showInfoPanel)}
+            aria-label="Informações do personagem"
+          >
+            <InformationCircleIcon className="w-7 h-7" />
+          </Button>
         </div>
 
-        {/* End call button */}
-        <Button
-          isIconOnly
-          className="w-16 h-16 rounded-full bg-red-500 hover:bg-red-600 text-white shadow-lg"
-          onPress={handleEndCall}
-          isDisabled={demoMode ? demoStatus === 'disconnected' : conversation.status === 'disconnected'}
-          aria-label="Encerrar chamada"
-        >
-          <XMarkIcon className="w-8 h-8" />
-        </Button>
+        {/* Connection progress */}
+        {(isStarting || conversation.status === 'connecting') && !error && (
+          <div className="max-w-xs w-full">
+            <div className="h-1 bg-gray-200 rounded-full overflow-hidden">
+              <div className="h-full bg-[#2E63CD] animate-pulse w-full" />
+            </div>
+          </div>
+        )}
 
-        {/* Info button */}
-        <Button
-          isIconOnly
-          className={cn(
-            "w-14 h-14 rounded-full transition-colors shadow-md",
-            showInfoPanel
-              ? "bg-[#2E63CD] text-white hover:bg-[#1E4FB8]"
-              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-          )}
-          onPress={() => setShowInfoPanel(!showInfoPanel)}
-          aria-label="Informações do personagem"
-        >
-          <InformationCircleIcon className="w-7 h-7" />
-        </Button>
+        {/* Error message */}
+        {error && (
+          <div className="max-w-md w-full bg-red-50 border border-red-200 rounded-lg p-4">
+            <p className="text-sm text-red-800">{error}</p>
+            <p className="text-xs text-red-600 mt-2">
+              Configure ELEVENLABS_API_KEY e NEXT_PUBLIC_ELEVENLABS_AGENT_ID no .env.local
+            </p>
+            <p className="text-xs text-gray-600 mt-1">
+              Consulte ELEVENLABS_OFFICIAL_SETUP.md para instruções
+            </p>
+          </div>
+        )}
       </div>
 
-      {/* Live transcript preview */}
-      {transcript.length > 0 && (
-        <div className="w-full max-w-2xl bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-          <p className="text-xs text-[#6B7280] uppercase tracking-wide mb-3 font-semibold">
-            Transcrição ao vivo
-          </p>
-          <div className="space-y-3 max-h-48 overflow-y-auto">
-            {transcript.slice(-3).map((entry, index) => (
-              <div key={entry.id} className={cn(
-                "flex gap-3 p-3 rounded-lg",
-                entry.speaker === "agent" ? "bg-blue-50" : "bg-gray-50"
-              )}>
-                <div className="flex-shrink-0">
-                  <div className={cn(
-                    "w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold",
-                    entry.speaker === "agent" 
-                      ? "bg-blue-600 text-white" 
-                      : "bg-gray-600 text-white"
+      {/* Transcript Panel (Offcanvas) */}
+      {showTranscriptPanel && (
+        <div className="fixed top-0 right-0 h-full w-96 bg-white border-l border-gray-200 shadow-2xl z-50 animate-slide-in-right overflow-y-auto">
+          {/* Header */}
+          <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between z-10">
+            <h3 className="text-lg font-semibold text-[#111827]">Transcrição ao Vivo</h3>
+            <Button
+              isIconOnly
+              size="sm"
+              variant="light"
+              className="rounded-lg hover:bg-gray-100"
+              onPress={() => setShowTranscriptPanel(false)}
+              aria-label="Fechar painel"
+            >
+              <XMarkIconOutline className="w-5 h-5" />
+            </Button>
+          </div>
+
+          {/* Content */}
+          <div className="p-4">
+            {transcript.length > 0 ? (
+              <div className="space-y-3">
+                {transcript.map((entry) => (
+                  <div key={entry.id} className={cn(
+                    "flex gap-3 p-3 rounded-lg",
+                    entry.speaker === "agent" ? "bg-blue-50" : "bg-gray-50"
                   )}>
-                    {entry.speaker === "agent" ? "AI" : "Eu"}
+                    <div className="flex-shrink-0">
+                      {entry.speaker === "agent" ? (
+                        <Avatar
+                          src={agent.avatar}
+                          name={agent.name}
+                          size="sm"
+                          className="w-8 h-8"
+                        />
+                      ) : (
+                        <Avatar
+                          src={user?.avatar}
+                          name={user?.name || "Você"}
+                          size="sm"
+                          className="w-8 h-8"
+                        />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-xs font-medium text-gray-700 mb-1">
+                        {entry.speaker === "agent" ? agent.name : user?.name || "Você"}
+                      </p>
+                      <p className="text-sm text-gray-800 leading-relaxed">
+                        {entry.content}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {entry.timestamp.toLocaleTimeString()}
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm text-gray-800 leading-relaxed">
-                    {entry.content}
-                  </p>
-                </div>
+                ))}
               </div>
-            ))}
+            ) : (
+              <div className="text-center py-12">
+                <ChatBubbleLeftRightIcon className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                <p className="text-sm text-gray-500">
+                  A transcrição aparecerá aqui durante a conversa
+                </p>
+              </div>
+            )}
           </div>
         </div>
       )}
-
-      {/* Connection progress */}
-      {(isStarting || conversation.status === 'connecting') && !error && (
-        <div className="max-w-xs w-full">
-          <div className="h-1 bg-gray-200 rounded-full overflow-hidden">
-            <div className="h-full bg-[#2E63CD] animate-pulse w-full" />
-          </div>
-        </div>
-      )}
-
-      {/* Error message */}
-      {error && (
-        <div className="max-w-md w-full bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-sm text-red-800">{error}</p>
-          <p className="text-xs text-red-600 mt-2">
-            Configure ELEVENLABS_API_KEY e NEXT_PUBLIC_ELEVENLABS_AGENT_ID no .env.local
-          </p>
-          <p className="text-xs text-gray-600 mt-1">
-            Consulte ELEVENLABS_OFFICIAL_SETUP.md para instruções
-          </p>
-        </div>
-      )}
-      </div>
 
       {/* Info Panel (Offcanvas) */}
       {showInfoPanel && (
