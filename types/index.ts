@@ -307,3 +307,85 @@ export interface ConversationState {
   isProcessing: boolean;
   error?: string;
 }
+
+// Onboarding Types
+export interface OnboardingFormData {
+  // Step 2: Business Context
+  business: {
+    companyName: string;
+    industry: string;
+    teamSize: string;
+    mainChallenge: string;
+    trainingGoal: string;
+  };
+
+  // Step 3: Product
+  product: {
+    name: string;
+    shortDescription: string;
+    problemSolved: string;
+    valueProposition: string;
+    priceRange: string;
+  };
+
+  // Step 4: Buyer Persona
+  buyer: {
+    profileName: string;
+    jobTitle: string;
+    companySizes: string[];
+    pains: string;
+    objections: string;
+    awarenessLevel: string;
+  };
+
+  // Step 5: Content
+  content: {
+    type: "upload" | "link" | "record";
+    videoUrl?: string;
+    uploadedFile?: File;
+    duration?: string;
+  };
+
+  // Step 6: Generated Results
+  generatedTrail?: GeneratedTrail;
+  generatedScenarios?: GeneratedScenario[];
+
+  // Step 7: Team
+  team: {
+    emails: string[];
+    permissions: {
+      accessTrails: boolean;
+      accessRoleplays: boolean;
+      createScenarios: boolean;
+    };
+    sendInvitesNow: boolean;
+    scheduledDate?: Date;
+    customMessage?: string;
+  };
+}
+
+export interface GeneratedTrail {
+  name: string;
+  totalDuration: string;
+  modules: TrailModule[];
+}
+
+export interface TrailModule {
+  id: string;
+  icon: string;
+  title: string;
+  duration: string;
+  topics: string[];
+}
+
+export interface GeneratedScenario {
+  id: string;
+  type: string;
+  icon: string;
+  title: string;
+  difficulty: "easy" | "medium" | "hard";
+  buyerName: string;
+  buyerRole: string;
+  objective: string;
+  included: boolean;
+}

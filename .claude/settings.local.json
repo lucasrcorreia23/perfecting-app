@@ -18,7 +18,8 @@
       "Bash(curl:*)",
       "Bash(grep:*)",
       "Bash(npm uninstall:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(npx next build:*)"
     ]
   }
 }

@@ -4,6 +4,8 @@ import { createContext, useContext, useState, useCallback, ReactNode } from "rea
 import { useRouter } from "next/navigation";
 import { User } from "@/types";
 
+const ONBOARDING_COMPLETED_KEY = "onboarding_completed";
+
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
@@ -11,6 +13,8 @@ interface AuthContextType {
   logout: () => void;
   isAdmin: boolean;
   isSeller: boolean;
+  hasCompletedOnboarding: boolean;
+  completeOnboarding: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -39,6 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
 
   const login = useCallback(async (email: string, password: string, role?: "admin" | "seller") => {
     try {
@@ -76,8 +81,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await new Promise((resolve) => setTimeout(resolve, 50));
 
       // Redirect based on role
+      // Only admins go to onboarding, sellers go directly to dashboard
       if (loggedUser.role === "admin") {
-        router.push("/admin");
+        router.push("/onboarding");
       } else {
         router.push("/dashboard");
       }
@@ -89,14 +95,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(() => {
     setUser(null);
+    setHasCompletedOnboarding(false);
     router.push("/login");
   }, [router]);
+
+  const completeOnboarding = useCallback(() => {
+    setHasCompletedOnboarding(true);
+    localStorage.setItem(ONBOARDING_COMPLETED_KEY, "true");
+  }, []);
 
   const isAdmin = user?.role === "admin";
   const isSeller = user?.role === "seller";
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout, isAdmin, isSeller }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      isLoading, 
+      login, 
+      logout, 
+      isAdmin, 
+      isSeller,
+      hasCompletedOnboarding,
+      completeOnboarding
+    }}>
       {children}
     </AuthContext.Provider>
   );

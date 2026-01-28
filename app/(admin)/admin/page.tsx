@@ -11,6 +11,7 @@ import {
   ArrowTrendingUpIcon,
   PlusIcon,
   ChevronRightIcon,
+  AcademicCapIcon,
 } from "@heroicons/react/24/outline";
 import { mockLeaderboard, mockRoleplays } from "@/lib/mock-data";
 import { cn, getScoreColor } from "@/lib/utils";
@@ -322,6 +323,13 @@ export default function AdminDashboardPage() {
               </h3>
             </CardHeader>
             <CardBody className="p-4 space-y-2">
+              <Link
+                href="/onboarding"
+                className="flex items-center gap-2 w-full px-4 py-2 rounded-lg hover:bg-[#F5F5F5] text-[#1F2937] transition-colors"
+              >
+                <AcademicCapIcon className="w-5 h-5 text-[#6B7280]" />
+                Configurar Onboarding
+              </Link>
               <Link
                 href="/users"
                 className="flex items-center gap-2 w-full px-4 py-2 rounded-lg hover:bg-[#F5F5F5] text-[#1F2937] transition-colors"
