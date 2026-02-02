@@ -1,8 +1,8 @@
 "use client";
 
-import { Sidebar } from "@/components/layout";
+import { Sidebar, ContentHeader } from "@/components/layout";
 import { useAuth } from "@/contexts";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function AdminLayout({
@@ -12,6 +12,7 @@ export default function AdminLayout({
 }) {
   const { user, isAdmin } = useAuth();
   const router = useRouter();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Proteção de rotas - apenas admin pode acessar
   useEffect(() => {
@@ -27,7 +28,7 @@ export default function AdminLayout({
     return null;
   }
 
-  const sidebarUser = {
+  const headerUser = {
     name: user.name,
     email: user.email,
     avatar: user.avatar,
@@ -36,9 +37,23 @@ export default function AdminLayout({
 
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
-      <Sidebar variant="admin" user={sidebarUser} />
-      <main className="pl-64 min-h-screen transition-all duration-300">
-        <div className="p-8">{children}</div>
+      {/* Mobile header */}
+      <ContentHeader
+        user={headerUser}
+        isMobile={true}
+        onMenuOpen={() => setIsSidebarOpen(true)}
+      />
+
+      <Sidebar
+        variant="admin"
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+      />
+
+      <main className="lg:pl-64 min-h-screen transition-all duration-300">
+        {/* Desktop header */}
+        <ContentHeader user={headerUser} />
+        <div className="p-4 sm:p-6 lg:p-8 pt-20 lg:pt-6">{children}</div>
       </main>
     </div>
   );

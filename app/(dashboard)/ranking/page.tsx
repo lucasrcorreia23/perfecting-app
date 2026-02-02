@@ -115,20 +115,21 @@ export default function RankingPage() {
         <Select
           selectedKeys={new Set([timeRange])}
           onSelectionChange={(keys) => setTimeRange(Array.from(keys)[0] as string)}
-          className="w-48 focus:outline-none"
+          className="w-fit min-w-[180px] max-w-[240px] focus:outline-none"
           placeholder="Selecione o período"
           aria-label="Período"
           variant="bordered"
           radius="lg"
           classNames={{
-            trigger: "bg-white border-2 border-[#E5E7EB] hover:border-[#2E63CD] data-[hover=true]:bg-[#F9FAFB] rounded-xl shadow-sm hover:shadow-md transition-all duration-200 min-h-[48px] focus:outline-none focus:ring-0",
+            trigger: "bg-white border-2 border-[#E5E7EB] hover:border-[#2E63CD] data-[hover=true]:bg-[#F9FAFB] rounded-xl shadow-sm hover:shadow-md transition-all duration-200 min-h-[48px] focus:outline-none focus:ring-0 w-fit min-w-[180px] max-w-[240px]",
             value: "text-[#1F2937] font-medium",
-            innerWrapper: "py-2",
-            popoverContent: "rounded-xl",
+            innerWrapper: "py-1",
+            popoverContent: "py-1 rounded-xl shadow-lg border border-[#E5E7EB] bg-white outline-none ring-0 w-fit min-w-[180px] max-w-[240px]",
+            listboxWrapper: "py-1",
           }}
           popoverProps={{
             classNames: {
-              content: "rounded-xl shadow-lg border-2 border-[#E5E7EB]",
+              content: "p-1 rounded-xl shadow-lg border border-[#E5E7EB] bg-white outline-none ring-0 w-fit min-w-[180px] max-w-[240px]",
             },
           }}
         >
@@ -230,15 +231,17 @@ export default function RankingPage() {
                 Classificação Completa
               </h3>
             </div>
-            <div className="relative max-w-xs">
-              <MagnifyingGlassIcon className="w-4 h-4 text-[#6B7280] absolute left-3 top-1/2 -translate-y-1/2 z-10" />
-              <Input
-                placeholder="Buscar participante..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9"
-              />
-            </div>
+            <Input
+              placeholder="Buscar participante..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              classNames={{
+                input: "min-w-0",
+                inputWrapper: "bg-white border-2 border-[#E5E7EB] hover:border-[#D1D5DB] data-[hover=true]:bg-[#F9FAFB] data-[focus=true]:border-[#2E63CD] rounded-xl min-h-[48px]",
+              }}
+              startContent={<MagnifyingGlassIcon className="w-5 h-5 text-[#6B7280] shrink-0" />}
+              className="max-w-xs w-full min-w-[200px]"
+            />
           </div>
         </CardHeader>
         <CardBody className="p-0">

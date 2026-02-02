@@ -13,6 +13,12 @@ interface RoleplayCardProps {
   onDuplicate?: () => void;
   onDelete?: () => void;
   showAdminActions?: boolean;
+  /** When false, the 3-dot menu is hidden (e.g. Personas page). */
+  showMenu?: boolean;
+  /** Primary footer button label. Default "Praticar". Use "Editar" for Personas. */
+  primaryButtonLabel?: string;
+  /** Primary footer button action. Defaults to onPractice when not set. */
+  primaryButtonAction?: () => void;
 }
 
 export function RoleplayCard({
@@ -23,6 +29,9 @@ export function RoleplayCard({
   onDuplicate,
   onDelete,
   showAdminActions = false,
+  showMenu = true,
+  primaryButtonLabel = "Praticar",
+  primaryButtonAction,
 }: RoleplayCardProps) {
   const categoryColor = getCategoryColor(roleplay.category);
   const categoryLabel = getCategoryLabel(roleplay.category);
@@ -38,10 +47,12 @@ export function RoleplayCard({
       : []),
   ];
 
+  const onPrimaryPress = primaryButtonAction ?? onPractice;
+
   return (
     <Card className="bg-white border border-[#E5E7EB] rounded-2xl transition-all duration-200 card-hover overflow-hidden">
       <CardBody className="p-6 gap-4">
-        {/* Header with category tag and menu */}
+        {/* Header with category tag and optional menu */}
         <div className="flex items-start justify-between gap-2">
           <Chip
             size="sm"
@@ -55,38 +66,47 @@ export function RoleplayCard({
             {categoryLabel}
           </Chip>
 
-          <Dropdown>
-            <DropdownTrigger>
-              <Button
-                isIconOnly
-                size="sm"
-                variant="ghost"
-                className="text-[#6B7280] -mt-1 -mr-1 rounded-lg hover:bg-[#F9FAFB] transition-colors"
-                aria-label="Opções do role-play"
-              >
-                <EllipsisVerticalIcon className="w-5 h-5" />
-              </Button>
-            </DropdownTrigger>
-            <DropdownMenu 
-              aria-label="Ações do role-play"
-              items={menuItems}
-              classNames={{
-                base: "rounded-xl shadow-lg border-2 border-[#E5E7EB] bg-white p-2",
-                list: "gap-1",
-              }}
+          {showMenu && (
+            <Dropdown
+              classNames={{ content: "p-1 outline-none ring-0 rounded-xl shadow-lg border border-[#E5E7EB] bg-white min-w-[160px]" }}
             >
-              {(item) => (
-                <DropdownItem 
-                  key={item.key}
-                  className={item.className || "rounded-lg hover:bg-[#F9FAFB] transition-colors"}
-                  color={item.color}
-                  onPress={item.action}
+              <DropdownTrigger>
+                <Button
+                  isIconOnly
+                  size="sm"
+                  variant="ghost"
+                  className="text-[#6B7280] -mt-1 -mr-1 rounded-lg hover:bg-[#F9FAFB] transition-colors"
+                  aria-label="Opções do role-play"
                 >
-                  {item.label}
-                </DropdownItem>
-              )}
-            </DropdownMenu>
-          </Dropdown>
+                  <EllipsisVerticalIcon className="w-5 h-5" />
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                aria-label="Ações do role-play"
+                items={menuItems}
+                variant="flat"
+                color="default"
+                classNames={{
+                  base: "p-1",
+                  list: "gap-0.5",
+                }}
+                itemClasses={{
+                  base: "rounded-lg data-[hover=true]:bg-[#F9FAFB] data-[pressed=true]:opacity-80 data-[focus-visible=true]:outline-none data-[focus-visible=true]:ring-2 data-[focus-visible=true]:ring-[#E5E7EB] data-[focus-visible=true]:ring-inset data-[focus-visible=true]:ring-offset-0",
+                }}
+              >
+                {(item) => (
+                  <DropdownItem
+                    key={item.key}
+                    className={item.className}
+                    color={item.color}
+                    onPress={item.action}
+                  >
+                    {item.label}
+                  </DropdownItem>
+                )}
+              </DropdownMenu>
+            </Dropdown>
+          )}
         </div>
 
         {/* Title and description */}
@@ -139,9 +159,9 @@ export function RoleplayCard({
           disableRipple={false}
           variant="bordered"
           className="w-full font-semibold border-2 border-[#E5E7EB] text-[#1F2937] hover:bg-[#F9FAFB] hover:border-[#D1D5DB] hover:text-[#111827] focus:bg-[#EBF0FA] rounded-xl shadow-none transition-all duration-200 min-h-[48px]"
-          onPress={onPractice}
+          onPress={onPrimaryPress}
         >
-          Praticar
+          {primaryButtonLabel}
         </Button>
       </CardFooter>
     </Card>

@@ -17,9 +17,9 @@ import { cn, getScoreColor } from "@/lib/utils";
 import { ProgressBar } from "@/components/ui";
 
 const timeRanges = [
-  { value: "7d", label: "Últimos 7 dias" },
-  { value: "30d", label: "Últimos 30 dias" },
-  { value: "90d", label: "Últimos 90 dias" },
+  { value: "7d", label: "7 dias" },
+  { value: "30d", label: "30 dias" },
+  { value: "90d", label: "90 dias" },
   { value: "all", label: "Todo o período" },
 ];
 
@@ -51,19 +51,20 @@ export default function MetricsPage() {
         <Select
           selectedKeys={new Set([timeRange])}
           onSelectionChange={(keys) => setTimeRange(Array.from(keys)[0] as string)}
-          className="w-48 focus:outline-none"
+          className="w-fit min-w-[180px] max-w-[240px] focus:outline-none"
           aria-label="Período"
           variant="bordered"
           radius="lg"
           classNames={{
-            trigger: "bg-white border-2 border-[#E5E7EB] hover:border-[#2E63CD] data-[hover=true]:bg-[#F9FAFB] rounded-xl shadow-sm hover:shadow-md transition-all duration-200 min-h-[48px] focus:outline-none focus:ring-0",
+            trigger: "bg-white border-2 border-[#E5E7EB] hover:border-[#2E63CD] data-[hover=true]:bg-[#F9FAFB] rounded-xl shadow-sm hover:shadow-md transition-all duration-200 min-h-[48px] focus:outline-none focus:ring-0 w-fit min-w-[180px] max-w-[240px]",
             value: "text-[#1F2937] font-medium",
-            innerWrapper: "py-2",
-            popoverContent: "rounded-xl",
+            innerWrapper: "py-1 px-1",
+            popoverContent: "py-1 px-1 rounded-xl shadow-lg border border-[#E5E7EB] bg-white outline-none ring-0 w-fit min-w-[180px] max-w-[240px]",
+            listboxWrapper: "py-1 px-1",
           }}
           popoverProps={{
             classNames: {
-              content: "rounded-xl shadow-lg border-2 border-[#E5E7EB]",
+              content: "p-1 rounded-xl shadow-lg border border-[#E5E7EB] bg-white outline-none ring-0 w-fit min-w-[180px] max-w-[240px]",
             },
           }}
         >

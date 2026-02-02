@@ -490,6 +490,13 @@ export const mockUserMetrics: UserMetrics = {
       earnedAt: new Date("2024-02-18"),
     },
   ],
+  lockedBadges: [
+    { id: "badge-lock-1", name: "10 Sessões", description: "Complete 10 sessões de prática", icon: "📊" },
+    { id: "badge-lock-2", name: "Top 5", description: "Entre no top 5 do ranking", icon: "🏆" },
+    { id: "badge-lock-3", name: "Trilha Completa", description: "Finalize uma trilha de aprendizado", icon: "🎓" },
+    { id: "badge-lock-4", name: "Semana Perfeita", description: "7 dias seguidos praticando", icon: "⭐" },
+    { id: "badge-lock-5", name: "Comunicador", description: "Score 95+ em role-play de comunicação", icon: "🗣️" },
+  ],
   weeklyProgress: [
     { week: "Semana 1", sessions: 8, averageScore: 65 },
     { week: "Semana 2", sessions: 10, averageScore: 72 },

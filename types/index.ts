@@ -124,6 +124,8 @@ export interface UserMetrics {
   totalPracticeTime: number;
   streakDays: number;
   badges: Badge[];
+  /** Conquistas ainda não desbloqueadas (estado desativado) */
+  lockedBadges?: { id: string; name: string; description: string; icon: string }[];
   weeklyProgress: WeeklyProgress[];
 }
 
@@ -388,4 +390,46 @@ export interface GeneratedScenario {
   buyerRole: string;
   objective: string;
   included: boolean;
+}
+
+// Learning Tracks Types
+export type ModuleStatus = "not_started" | "in_progress" | "completed";
+export type TrackDifficulty = "beginner" | "intermediate" | "advanced";
+export type TrackBadge = "beginner" | "popular" | "new" | "recommended";
+
+export interface LearningModule {
+  id: string;
+  title: string;
+  objective: string;
+  /** Conteúdo descritivo do módulo (usado nos dois primeiros módulos das trilhas). */
+  content?: string;
+  duration: string;
+  status: ModuleStatus;
+  order: number;
+  scenarioSlug?: string;
+  characterId?: string;
+}
+
+export interface LearningTrack {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  coverImage: string;
+  estimatedTime: string;
+  difficulty: TrackDifficulty;
+  badge?: TrackBadge;
+  categoryId: string;
+  modules: LearningModule[];
+  progress?: number;
+  tags: string[];
+  featured?: boolean;
+}
+
+export interface TrackCategory {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  order: number;
 }

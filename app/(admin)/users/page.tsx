@@ -97,38 +97,43 @@ export default function UsersPage() {
       {/* Filters */}
       <Card className="bg-white border border-[#E5E7EB] rounded-2xl">
         <CardBody className="p-4">
-          <div className="flex flex-col lg:flex-row gap-4">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-center gap-4">
             <Input
               placeholder="Buscar por nome ou e-mail..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="max-w-sm"
+              classNames={{
+                input: "min-w-0",
+                inputWrapper: "bg-white border-2 border-[#E5E7EB] hover:border-[#D1D5DB] data-[hover=true]:bg-[#F9FAFB] data-[focus=true]:border-[#2E63CD] rounded-xl min-h-[48px]",
+              }}
+              startContent={<MagnifyingGlassIcon className="w-5 h-5 text-[#6B7280] shrink-0" />}
+              className="max-w-sm w-full min-w-[200px]"
             />
-            <MagnifyingGlassIcon className="w-5 h-5 text-[#6B7280] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
 
             <div className="flex flex-wrap gap-4">
               <Select
                 placeholder="Grupo"
                 selectedKeys={new Set([selectedGroup])}
                 onSelectionChange={(keys) => setSelectedGroup(Array.from(keys)[0] as string)}
-                className="w-44 focus:outline-none"
+                className="w-fit min-w-[180px] max-w-[240px] focus:outline-none"
                 aria-label="Grupo"
                 variant="bordered"
                 radius="lg"
                 classNames={{
-                  trigger: "bg-white border-2 border-[#E5E7EB] hover:border-[#2E63CD] data-[hover=true]:bg-[#F9FAFB] rounded-xl shadow-sm hover:shadow-md transition-all duration-200 min-h-[48px] focus:outline-none focus:ring-0",
+                  trigger: "bg-white border-2 border-[#E5E7EB] hover:border-[#2E63CD] data-[hover=true]:bg-[#F9FAFB] rounded-xl shadow-sm hover:shadow-md transition-all duration-200 min-h-[48px] focus:outline-none focus:ring-0 w-fit min-w-[180px] max-w-[240px]",
                   value: "text-[#1F2937] font-medium",
-                  innerWrapper: "py-2",
-                  popoverContent: "rounded-xl",
+                  innerWrapper: "py-1",
+                  popoverContent: "py-1 rounded-xl shadow-lg border border-[#E5E7EB] bg-white w-fit min-w-[180px] max-w-[240px]",
+                  listboxWrapper: "py-1",
                 }}
                 popoverProps={{
                   classNames: {
-                    content: "rounded-xl shadow-lg border-2 border-[#E5E7EB]",
+                    content: "p-1 rounded-xl shadow-lg border border-[#E5E7EB] bg-white w-fit min-w-[180px] max-w-[240px]",
                   },
                 }}
               >
                 {groups.map((group) => (
-                  <SelectItem key={group.value}>{group.label}</SelectItem>
+                  <SelectItem key={group.value} textValue={group.label}>{group.label}</SelectItem>
                 ))}
               </Select>
 
@@ -136,24 +141,25 @@ export default function UsersPage() {
                 placeholder="Status"
                 selectedKeys={new Set([selectedStatus])}
                 onSelectionChange={(keys) => setSelectedStatus(Array.from(keys)[0] as string)}
-                className="w-36 focus:outline-none"
+                className="w-fit min-w-[180px] max-w-[240px] focus:outline-none"
                 aria-label="Status"
                 variant="bordered"
                 radius="lg"
                 classNames={{
-                  trigger: "bg-white border-2 border-[#E5E7EB] hover:border-[#2E63CD] data-[hover=true]:bg-[#F9FAFB] rounded-xl shadow-sm hover:shadow-md transition-all duration-200 min-h-[48px] focus:outline-none focus:ring-0",
+                  trigger: "bg-white border-2 border-[#E5E7EB] hover:border-[#2E63CD] data-[hover=true]:bg-[#F9FAFB] rounded-xl shadow-sm hover:shadow-md transition-all duration-200 min-h-[48px] focus:outline-none focus:ring-0 w-fit min-w-[180px] max-w-[240px]",
                   value: "text-[#1F2937] font-medium",
-                  innerWrapper: "py-2",
-                  popoverContent: "rounded-xl",
+                  innerWrapper: "py-1",
+                  popoverContent: "py-1 rounded-xl shadow-lg border border-[#E5E7EB] bg-white w-fit min-w-[180px] max-w-[240px]",
+                  listboxWrapper: "py-1",
                 }}
                 popoverProps={{
                   classNames: {
-                    content: "rounded-xl shadow-lg border-2 border-[#E5E7EB]",
+                    content: "p-1 rounded-xl shadow-lg border border-[#E5E7EB] bg-white w-fit min-w-[180px] max-w-[240px]",
                   },
                 }}
               >
                 {statusOptions.map((status) => (
-                  <SelectItem key={status.value}>{status.label}</SelectItem>
+                  <SelectItem key={status.value} textValue={status.label}>{status.label}</SelectItem>
                 ))}
               </Select>
             </div>
@@ -235,18 +241,28 @@ export default function UsersPage() {
                     </Chip>
                   </TableCell>
                   <TableCell>
-                    <Dropdown>
+                    <Dropdown
+                      classNames={{ content: "p-1 outline-none ring-0 rounded-xl shadow-lg border border-[#E5E7EB] bg-white min-w-[160px]" }}
+                    >
                       <DropdownTrigger>
                         <Button isIconOnly variant="ghost" size="sm" className="rounded-lg hover:bg-[#F9FAFB] transition-colors">
                           <EllipsisVerticalIcon className="w-5 h-5 text-[#6B7280]" />
                         </Button>
                       </DropdownTrigger>
-                      <DropdownMenu aria-label="Ações do usuário">
+                      <DropdownMenu
+                        aria-label="Ações do usuário"
+                        variant="flat"
+                        color="default"
+                        classNames={{ base: "p-1", list: "gap-0.5" }}
+                        itemClasses={{
+                          base: "rounded-lg data-[hover=true]:bg-[#F9FAFB] data-[pressed=true]:opacity-80 data-[focus-visible=true]:outline-none data-[focus-visible=true]:ring-2 data-[focus-visible=true]:ring-[#E5E7EB] data-[focus-visible=true]:ring-inset data-[focus-visible=true]:ring-offset-0",
+                        }}
+                      >
                         <DropdownItem key="view">Ver perfil</DropdownItem>
                         <DropdownItem key="edit">Editar</DropdownItem>
                         <DropdownItem key="metrics">Ver métricas</DropdownItem>
                         <DropdownItem key="reset">Resetar senha</DropdownItem>
-                        <DropdownItem key="deactivate" className="text-danger" >
+                        <DropdownItem key="deactivate" className="text-danger" color="danger">
                           Desativar
                         </DropdownItem>
                       </DropdownMenu>

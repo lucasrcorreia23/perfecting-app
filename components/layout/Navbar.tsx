@@ -71,11 +71,13 @@ export function Navbar({ user }: NavbarProps) {
       <NavbarContent className="gap-4">
         {/* Notifications */}
         <NavbarItem>
-          <Dropdown >
+          <Dropdown
+            classNames={{ content: "p-0 outline-none ring-0 rounded-xl shadow-lg border border-[#E5E7EB] bg-white w-80" }}
+          >
             <DropdownTrigger>
-              <Button 
-                isIconOnly 
-                variant="ghost" 
+              <Button
+                isIconOnly
+                variant="ghost"
                 className="text-[#6B7280] rounded-lg hover:bg-[#F9FAFB] transition-colors"
                 aria-label="Notificações"
               >
@@ -84,30 +86,25 @@ export function Navbar({ user }: NavbarProps) {
                 </Badge>
               </Button>
             </DropdownTrigger>
-            <DropdownMenu 
-              aria-label="Notificações" 
-              className="w-80"
+            <DropdownMenu
+              aria-label="Notificações"
+              variant="flat"
+              color="default"
               classNames={{
-                base: "rounded-xl shadow-lg border-2 border-[#E5E7EB] bg-white p-2",
+                base: "p-2",
                 list: "gap-1",
               }}
+              itemClasses={{
+                base: "rounded-lg data-[hover=true]:bg-[#F9FAFB] data-[pressed=true]:opacity-80 data-[focus-visible=true]:outline-none data-[focus-visible=true]:ring-2 data-[focus-visible=true]:ring-[#E5E7EB] data-[focus-visible=true]:ring-inset data-[focus-visible=true]:ring-offset-0",
+              }}
             >
-              <DropdownItem
-                key="notification-1"
-                className="rounded-lg hover:bg-[#F9FAFB] transition-colors"
-              >
+              <DropdownItem key="notification-1" className="rounded-lg">
                 Nova conquista desbloqueada
               </DropdownItem>
-              <DropdownItem
-                key="notification-2"
-                className="rounded-lg hover:bg-[#F9FAFB] transition-colors"
-              >
+              <DropdownItem key="notification-2" className="rounded-lg">
                 Novo conteúdo disponível
               </DropdownItem>
-              <DropdownItem
-                key="notification-3"
-                className="rounded-lg hover:bg-[#F9FAFB] transition-colors"
-              >
+              <DropdownItem key="notification-3" className="rounded-lg">
                 Progresso semanal
               </DropdownItem>
             </DropdownMenu>
@@ -116,7 +113,9 @@ export function Navbar({ user }: NavbarProps) {
 
         {/* User menu */}
         <NavbarItem>
-          <Dropdown >
+          <Dropdown
+            classNames={{ content: "p-1 outline-none ring-0 rounded-xl shadow-lg border border-[#E5E7EB] bg-white min-w-[240px]" }}
+          >
             <DropdownTrigger>
               <Avatar
                 as="button"
@@ -125,33 +124,33 @@ export function Navbar({ user }: NavbarProps) {
                 size="sm"
               />
             </DropdownTrigger>
-            <DropdownMenu 
+            <DropdownMenu
               aria-label="Menu do usuário"
+              variant="flat"
+              color="default"
               classNames={{
-                base: "rounded-xl shadow-lg border-2 border-[#E5E7EB] bg-white p-2 min-w-[240px]",
+                base: "p-1",
                 list: "gap-1",
               }}
+              itemClasses={{
+                base: "rounded-lg data-[hover=true]:bg-[#F9FAFB] data-[pressed=true]:opacity-80 data-[focus-visible=true]:outline-none data-[focus-visible=true]:ring-2 data-[focus-visible=true]:ring-[#E5E7EB] data-[focus-visible=true]:ring-inset data-[focus-visible=true]:ring-offset-0",
+              }}
             >
-              <DropdownItem key="profile" className="h-14 gap-2 rounded-lg hover:bg-transparent cursor-default">
+              <DropdownItem
+                key="profile"
+                className="h-14 gap-2 rounded-lg cursor-default"
+                classNames={{ base: "data-[hover=true]:bg-transparent" }}
+              >
                 <p className="font-semibold text-[#111827]">{user?.name || "Usuário"}</p>
                 <p className="text-sm text-[#6B7280]">{user?.email || "email@exemplo.com"}</p>
               </DropdownItem>
-              <DropdownItem
-                key="my-profile"
-                className="rounded-lg hover:bg-[#F9FAFB] transition-colors"
-              >
+              <DropdownItem key="my-profile" className="rounded-lg">
                 Meu Perfil
               </DropdownItem>
-              <DropdownItem
-                key="metrics"
-                className="rounded-lg hover:bg-[#F9FAFB] transition-colors"
-              >
+              <DropdownItem key="metrics" className="rounded-lg">
                 Minhas Métricas
               </DropdownItem>
-              <DropdownItem
-                key="settings"
-                className="rounded-lg hover:bg-[#F9FAFB] transition-colors"
-              >
+              <DropdownItem key="settings" className="rounded-lg">
                 Configurações
               </DropdownItem>
               <DropdownItem

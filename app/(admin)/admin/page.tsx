@@ -3,6 +3,7 @@
 import { Card, CardHeader, CardBody, Button, Chip, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Avatar, Select, SelectItem } from "@heroui/react";
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   UsersIcon,
   PlayCircleIcon,
@@ -11,19 +12,19 @@ import {
   ArrowTrendingUpIcon,
   PlusIcon,
   ChevronRightIcon,
-  AcademicCapIcon,
 } from "@heroicons/react/24/outline";
 import { mockLeaderboard, mockRoleplays } from "@/lib/mock-data";
 import { cn, getScoreColor } from "@/lib/utils";
 import { ProgressBar } from "@/components/ui";
 
 const timeRanges = [
-  { value: "7d", label: "Últimos 7 dias" },
-  { value: "30d", label: "Últimos 30 dias" },
-  { value: "90d", label: "Últimos 90 dias" },
+  { value: "7d", label: "7 dias" },
+  { value: "30d", label: "30 dias" },
+  { value: "90d", label: "90 dias" },
 ];
 
 export default function AdminDashboardPage() {
+  const router = useRouter();
   const [timeRange, setTimeRange] = useState("30d");
 
   // Mock stats
@@ -38,32 +39,28 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
+      {/* Header: linha 1 = título + Select; linha 2 = subtítulo + CTA alinhado ao subtítulo */}
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <h1 className="heading-3">Dashboard Administrativo</h1>
-          <p className="text-[#6B7280] mt-1">
-            Gerencie sua equipe e acompanhe o progresso dos treinamentos
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
           <Select
             selectedKeys={new Set([timeRange])}
             onSelectionChange={(keys) => setTimeRange(Array.from(keys)[0] as string)}
-            className="w-44 focus:outline-none"
+            size="sm"
+            className="w-fit min-w-[140px] max-w-[200px] focus:outline-none"
             aria-label="Período"
             variant="bordered"
             radius="lg"
             classNames={{
-              trigger: "bg-white border-2 border-[#E5E7EB] hover:border-[#D1D5DB] data-[focus=true]:border-[#2E63CD] data-[focus=true]:bg-[#EBF0FA] data-[open=true]:border-[#2E63CD] data-[open=true]:bg-[#EBF0FA] rounded-xl shadow-none transition-all duration-200 min-h-[48px] focus:outline-none focus:ring-0",
-              value: "text-[#1F2937] font-medium",
-              innerWrapper: "py-2",
-              popoverContent: "rounded-xl shadow-none",
+              trigger: "bg-white border-2 border-[#E5E7EB] hover:border-[#D1D5DB] data-[focus=true]:border-[#2E63CD] data-[focus=true]:bg-[#EBF0FA] data-[open=true]:border-[#2E63CD] data-[open=true]:bg-[#EBF0FA] rounded-lg shadow-none transition-all duration-200 h-10 min-h-[40px] max-h-[40px] focus:outline-none focus:ring-0 w-fit min-w-[140px] max-w-[200px]",
+              value: "text-[#1F2937] font-medium text-sm",
+              innerWrapper: "p-2",
+              popoverContent: "p-2 rounded-xl shadow-none w-fit min-w-[140px] max-w-[200px]",
+              listboxWrapper: "p-2",
             }}
             popoverProps={{
               classNames: {
-                content: "rounded-xl shadow-none border border-[#E5E7EB]",
+                content: "p-0 rounded-xl shadow-none border border-[#E5E7EB] w-fit min-w-[140px] max-w-[200px]",
               },
             }}
           >
@@ -71,13 +68,18 @@ export default function AdminDashboardPage() {
               <SelectItem key={range.value}>{range.label}</SelectItem>
             ))}
           </Select>
-          <Link
-            href="/roleplays/create"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-[#2E63CD] hover:bg-[#2451A8] text-white font-medium rounded-xl shadow-none transition-all duration-200 min-h-[48px]"
+        </div>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <p className="text-[#6B7280] text-sm">
+            Gerencie sua equipe e acompanhe o progresso dos treinamentos
+          </p>
+          <Button
+            className="bg-[#2E63CD] hover:bg-[#2451A8] text-white font-medium rounded-xl shadow-md hover:shadow-lg transition-all min-h-[40px] h-10 w-fit self-start sm:self-center"
+            onPress={() => router.push("/roleplays/create")}
+            startContent={<PlusIcon className="w-4 h-4" />}
           >
-            <PlusIcon className="w-5 h-5" />
-            Criar Role-play
-          </Link>
+            Criar treinamento
+          </Button>
         </div>
       </div>
 
@@ -170,12 +172,11 @@ export default function AdminDashboardPage() {
         </Card>
       </div>
 
-      {/* Main content grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Team performance */}
-        <div className="lg:col-span-2 space-y-6">
-          <Card className="bg-white border border-[#E5E7EB] rounded-2xl">
-            <CardHeader className="px-6 py-4 border-b border-[#E5E7EB]">
+      {/* Main content grid: linha 1 = Desempenho | Atividade Recente (mesma altura); linha 2 = Role-plays | Destaques (mesma altura) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+        {/* Desempenho da Equipe */}
+        <Card className="bg-white border border-[#E5E7EB] rounded-2xl flex flex-col h-full min-h-0">
+            <CardHeader className="px-6 py-4 border-b border-[#E5E7EB] flex-shrink-0">
               <div className="flex items-center justify-between w-full">
                 <h3 className="text-lg font-semibold text-[#111827]">
                   Desempenho da Equipe
@@ -189,7 +190,7 @@ export default function AdminDashboardPage() {
                 </Link>
               </div>
             </CardHeader>
-            <CardBody className="p-0">
+            <CardBody className="p-0 flex-1 min-h-0 overflow-auto">
               <Table
                 aria-label="Tabela de desempenho da equipe"
                 className="w-full"
@@ -258,9 +259,41 @@ export default function AdminDashboardPage() {
             </CardBody>
           </Card>
 
-          {/* Role-plays management */}
-          <Card className="bg-white border border-[#E5E7EB] rounded-2xl">
-            <CardHeader className="px-6 py-4 border-b border-[#E5E7EB]">
+        {/* Atividade Recente — mesma altura que Desempenho da Equipe */}
+        <Card className="bg-white border border-[#E5E7EB] rounded-2xl flex flex-col h-full min-h-0">
+            <CardHeader className="px-6 py-4 border-b border-[#E5E7EB] flex-shrink-0">
+              <h3 className="text-lg font-semibold text-[#111827]">
+                Atividade Recente
+              </h3>
+            </CardHeader>
+            <CardBody className="p-4 flex-1 min-h-0 overflow-auto">
+              <div className="space-y-4">
+                {[
+                  { user: "Ana Carolina", action: "completou", target: "Objeção de Preço", time: "2min" },
+                  { user: "Pedro Santos", action: "iniciou", target: "Demonstração SaaS", time: "15min" },
+                  { user: "Julia Oliveira", action: "completou", target: "Primeira Abordagem", time: "32min" },
+                  { user: "Marcos Lima", action: "entrou na", target: "plataforma", time: "1h" },
+                  { user: "Camila Rocha", action: "completou", target: "Fechamento Final", time: "2h" },
+                ].map((activity, index) => (
+                  <div key={index} className="flex items-start gap-3">
+                    <div className="w-2 h-2 rounded-full bg-[#2E63CD] mt-2" />
+                    <div className="flex-1">
+                      <p className="text-sm text-[#1F2937]">
+                        <span className="font-medium">{activity.user}</span>{" "}
+                        {activity.action}{" "}
+                        <span className="font-medium">{activity.target}</span>
+                      </p>
+                      <p className="text-xs text-[#6B7280]">{activity.time} atrás</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardBody>
+          </Card>
+
+        {/* Role-plays Ativos */}
+        <Card className="bg-white border border-[#E5E7EB] rounded-2xl flex flex-col h-full min-h-0">
+            <CardHeader className="px-6 py-4 border-b border-[#E5E7EB] flex-shrink-0">
               <div className="flex items-center justify-between w-full">
                 <h3 className="text-lg font-semibold text-[#111827]">
                   Role-plays Ativos
@@ -274,7 +307,7 @@ export default function AdminDashboardPage() {
                 </Link>
               </div>
             </CardHeader>
-            <CardBody className="p-0">
+            <CardBody className="p-0 flex-1 min-h-0 overflow-auto">
               <div className="divide-y divide-[#E5E7EB]">
                 {mockRoleplays.slice(0, 4).map((roleplay) => (
                   <div
@@ -311,89 +344,15 @@ export default function AdminDashboardPage() {
               </div>
             </CardBody>
           </Card>
-        </div>
 
-        {/* Sidebar */}
-        <div className="space-y-6">
-          {/* Quick actions */}
-          <Card className="bg-white border border-[#E5E7EB] rounded-2xl">
-            <CardHeader className="px-6 py-4 border-b border-[#E5E7EB]">
-              <h3 className="text-lg font-semibold text-[#111827]">
-                Ações Rápidas
-              </h3>
-            </CardHeader>
-            <CardBody className="p-4 space-y-2">
-              <Link
-                href="/onboarding"
-                className="flex items-center gap-2 w-full px-4 py-2 rounded-lg hover:bg-[#F5F5F5] text-[#1F2937] transition-colors"
-              >
-                <AcademicCapIcon className="w-5 h-5 text-[#6B7280]" />
-                Configurar Onboarding
-              </Link>
-              <Link
-                href="/users"
-                className="flex items-center gap-2 w-full px-4 py-2 rounded-lg hover:bg-[#F5F5F5] text-[#1F2937] transition-colors"
-              >
-                <UsersIcon className="w-5 h-5 text-[#6B7280]" />
-                Gerenciar Usuários
-              </Link>
-              <Link
-                href="/roleplays"
-                className="flex items-center gap-2 w-full px-4 py-2 rounded-lg hover:bg-[#F5F5F5] text-[#1F2937] transition-colors"
-              >
-                <PlayCircleIcon className="w-5 h-5 text-[#6B7280]" />
-                Ver Role-plays
-              </Link>
-              <Link
-                href="/metrics"
-                className="flex items-center gap-2 w-full px-4 py-2 rounded-lg hover:bg-[#F5F5F5] text-[#1F2937] transition-colors"
-              >
-                <ChartBarIcon className="w-5 h-5 text-[#6B7280]" />
-                Ver Métricas
-              </Link>
-            </CardBody>
-          </Card>
-
-          {/* Activity feed */}
-          <Card className="bg-white border border-[#E5E7EB] rounded-2xl">
-            <CardHeader className="px-6 py-4 border-b border-[#E5E7EB]">
-              <h3 className="text-lg font-semibold text-[#111827]">
-                Atividade Recente
-              </h3>
-            </CardHeader>
-            <CardBody className="p-4">
-              <div className="space-y-4">
-                {[
-                  { user: "Ana Carolina", action: "completou", target: "Objeção de Preço", time: "2min" },
-                  { user: "Pedro Santos", action: "iniciou", target: "Demonstração SaaS", time: "15min" },
-                  { user: "Julia Oliveira", action: "completou", target: "Primeira Abordagem", time: "32min" },
-                  { user: "Marcos Lima", action: "entrou na", target: "plataforma", time: "1h" },
-                  { user: "Camila Rocha", action: "completou", target: "Fechamento Final", time: "2h" },
-                ].map((activity, index) => (
-                  <div key={index} className="flex items-start gap-3">
-                    <div className="w-2 h-2 rounded-full bg-[#2E63CD] mt-2" />
-                    <div className="flex-1">
-                      <p className="text-sm text-[#1F2937]">
-                        <span className="font-medium">{activity.user}</span>{" "}
-                        {activity.action}{" "}
-                        <span className="font-medium">{activity.target}</span>
-                      </p>
-                      <p className="text-xs text-[#6B7280]">{activity.time} atrás</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardBody>
-          </Card>
-
-          {/* Top performers */}
-          <Card className="bg-white border border-[#E5E7EB] rounded-2xl">
-            <CardHeader className="px-6 py-4 border-b border-[#E5E7EB]">
+        {/* Destaques da Semana — mesma altura que Role-plays Ativos */}
+        <Card className="bg-white border border-[#E5E7EB] rounded-2xl flex flex-col h-full min-h-0">
+            <CardHeader className="px-6 py-4 border-b border-[#E5E7EB] flex-shrink-0">
               <h3 className="text-lg font-semibold text-[#111827]">
                 Destaques da Semana
               </h3>
             </CardHeader>
-            <CardBody className="p-4">
+            <CardBody className="p-4 flex-1 min-h-0 overflow-auto">
               <div className="space-y-3">
                 {mockLeaderboard.slice(0, 3).map((user, index) => (
                   <div
@@ -421,7 +380,6 @@ export default function AdminDashboardPage() {
               </div>
             </CardBody>
           </Card>
-        </div>
       </div>
     </div>
   );

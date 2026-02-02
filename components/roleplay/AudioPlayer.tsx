@@ -157,7 +157,9 @@ export function AudioPlayer({ audioUrl, duration }: AudioPlayerProps) {
           </div>
 
           {/* Playback Speed */}
-          <Dropdown>
+          <Dropdown
+            classNames={{ content: "p-1 outline-none ring-0 rounded-xl shadow-lg border border-[#E5E7EB] bg-white min-w-[100px]" }}
+          >
             <DropdownTrigger>
               <Button
                 size="sm"
@@ -176,16 +178,15 @@ export function AudioPlayer({ audioUrl, duration }: AudioPlayerProps) {
                 const speed = speedOptions.find((s) => s.key === selected)?.value || 1;
                 handleSpeedChange(speed);
               }}
-              classNames={{
-                base: "rounded-xl shadow-lg border-2 border-[#E5E7EB] bg-white p-2",
-                list: "gap-1",
+              variant="flat"
+              color="default"
+              classNames={{ base: "p-1", list: "gap-0.5" }}
+              itemClasses={{
+                base: "rounded-lg data-[hover=true]:bg-[#F9FAFB] data-[pressed=true]:opacity-80 data-[focus-visible=true]:outline-none data-[focus-visible=true]:ring-2 data-[focus-visible=true]:ring-[#E5E7EB] data-[focus-visible=true]:ring-inset data-[focus-visible=true]:ring-offset-0",
               }}
             >
               {speedOptions.map((option) => (
-                <DropdownItem 
-                  key={option.key}
-                  className="rounded-lg hover:bg-[#F9FAFB] transition-colors"
-                >
+                <DropdownItem key={option.key} className="rounded-lg">
                   {option.label}
                 </DropdownItem>
               ))}

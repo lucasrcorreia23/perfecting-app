@@ -45,9 +45,8 @@ export default function RoleplaysPage() {
     });
   }, [searchQuery, selectedScenario]);
 
-  const handlePracticeCharacter = (character: any) => {
-    // Redireciona para a página do cenário com o personagem
-    router.push(`/roleplays/scenario/${character.scenarioSlug}?character=${character.id}`);
+  const handleEditPersona = (character: any) => {
+    router.push(`/roleplays/persona/${character.id}/edit`);
   };
 
   const handleDeleteClick = (characterId: string) => {
@@ -70,11 +69,11 @@ export default function RoleplaysPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="heading-3">Biblioteca de Personagens</h1>
+          <h1 className="heading-3">Personas</h1>
           <p className="text-[#6B7280] mt-1">
             {isAdmin
-              ? "Gerencie personagens de todos os cenários"
-              : "Escolha um personagem e pratique suas habilidades"}
+              ? "Gerencie personas de todos os cenários"
+              : "Edite o contexto da persona para usar em outros cenários"}
           </p>
         </div>
 
@@ -104,21 +103,29 @@ export default function RoleplaysPage() {
             placeholder="Todos os cenários"
             selectedKeys={new Set([selectedScenario])}
             onSelectionChange={(keys) => setSelectedScenario(Array.from(keys)[0] as string)}
-            className="w-56"
+            className="min-w-[260px]"
             aria-label="Cenário"
             radius="lg"
             classNames={{
               trigger: "min-h-[48px] !bg-white !border-2 !border-[#E5E7EB] !rounded-xl shadow-sm hover:!border-[#D1D5DB] hover:shadow-md",
               value: "text-[#1F2937] font-medium",
-              innerWrapper: "py-2",
+              innerWrapper: "py-1",
+              popoverContent: "py-1 rounded-xl shadow-lg border border-[#E5E7EB] bg-white min-w-[260px] outline-none ring-0",
+              listboxWrapper: "max-h-[280px] overflow-y-auto py-1 pb-2",
+            }}
+            listboxProps={{ hideSelectedIcon: true }}
+            popoverProps={{
+              classNames: {
+                content: "p-1 rounded-xl shadow-lg border border-[#E5E7EB] bg-white min-w-[260px] outline-none ring-0",
+              },
             }}
             items={[
               { value: "all", label: "Todos os cenários" },
-              ...mockScenarios.map(s => ({ value: s.slug, label: `${s.icon} ${s.name}` }))
+              ...mockScenarios.map(s => ({ value: s.slug, label: s.name }))
             ]}
           >
             {(item: any) => (
-              <SelectItem key={item.value}>
+              <SelectItem key={item.value} textValue={item.label}>
                 {item.label}
               </SelectItem>
             )}
@@ -145,7 +152,6 @@ export default function RoleplaysPage() {
               size="sm"
               className="bg-blue-50 text-blue-700"
             >
-              {mockScenarios.find((s) => s.slug === selectedScenario)?.icon}{" "}
               {mockScenarios.find((s) => s.slug === selectedScenario)?.name}
             </Chip>
           )}
@@ -165,7 +171,7 @@ export default function RoleplaysPage() {
 
       {/* Results count */}
       <div className="text-sm text-[#6B7280]">
-        {filteredCharacters.length} personagem{filteredCharacters.length !== 1 && "s"} encontrado{filteredCharacters.length !== 1 && "s"}
+        {filteredCharacters.length} persona{filteredCharacters.length !== 1 && "s"} encontrada{filteredCharacters.length !== 1 && "s"}
       </div>
 
       {/* Characters grid */}
@@ -197,7 +203,9 @@ export default function RoleplaysPage() {
                 createdAt: new Date(),
                 updatedAt: new Date(),
               }}
-              onPractice={() => handlePracticeCharacter(character)}
+              showMenu={false}
+              primaryButtonLabel="Editar"
+              primaryButtonAction={() => handleEditPersona(character)}
               showAdminActions={false}
             />
           ))}
@@ -206,7 +214,7 @@ export default function RoleplaysPage() {
         <div className="text-center py-16">
           <div className="text-6xl mb-4">🔍</div>
           <h3 className="text-lg font-semibold text-[#111827] mb-2">
-            Nenhum personagem encontrado
+            Nenhuma persona encontrada
           </h3>
           <p className="text-[#6B7280] mb-4">
             Tente ajustar os filtros ou buscar por outros termos
